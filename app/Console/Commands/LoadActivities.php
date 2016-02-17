@@ -104,9 +104,11 @@ http://www.visitbrisbane.com.au/south-bank/whats-on/free/ginger-sports-soccer-at
 </x-trumba:weblink>
 
              */
-            $this->dispatch(new CreateActivity((string)$item->title, (string)$item->description));
-
-
+            $this->dispatch(new CreateActivity(
+                (string)$item->title,
+                (string)$item->description,
+                (string)$trumba->weblink
+            ));
         }
 
         $activities = Activity::all();

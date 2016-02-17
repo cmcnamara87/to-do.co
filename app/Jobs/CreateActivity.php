@@ -14,10 +14,11 @@ class CreateActivity extends Job implements ShouldQueue
     protected $title;
     protected $description;
 
-    function __construct($title, $description)
+    function __construct($title, $description, $weblink)
     {
         $this->title = $title;
         $this->description = $description;
+        $this->weblink = $weblink;
     }
 
     /**
@@ -29,7 +30,8 @@ class CreateActivity extends Job implements ShouldQueue
     {
         return Activity::create([
             "title" => $this->title,
-            "description" => $this->description
+            "description" => $this->description,
+            "weblink" => $this->weblink
         ]);
     }
 }
