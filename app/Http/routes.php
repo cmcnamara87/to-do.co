@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'ActivitiesController@index');
+Route::get('/things-to-do-in-brisbane', 'ActivitiesController@index');
 Route::resource('activities', 'ActivitiesController');
 
 /*
