@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Activity;
 use App\Jobs\CreateActivity;
+use App\Timetable;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
@@ -43,6 +45,7 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
+        Activity::truncate();
         // get the activites from bcc
 
         // south bank feed
@@ -54,6 +57,7 @@ class LoadActivities extends Command
             $namespaces = $item->getNameSpaces(true);
             //Now we don't have the URL hard-coded
             $trumba = $item->children($namespaces['x-trumba']);
+            $xcal = $item->children($namespaces['xCal']);
 //            echo $trumba->localstart;
 //            echo $trumba->creator;
 
@@ -104,16 +108,38 @@ http://www.visitbrisbane.com.au/south-bank/whats-on/free/ginger-sports-soccer-at
 </x-trumba:weblink>
 
              */
-            $this->dispatch(new CreateActivity(
-                (string)$item->title,
-                (string)$item->description,
-                (string)$trumba->weblink
-            ));
+            $this->info($item->title);
+
+            $image_url = '';
+            foreach($trumba->customfield as $customField) {
+                if($customField->attributes()->name == "Event image") {
+                    $image_url = (string)$customField;
+                }
+            }
+
+            $title = (string)$item->title;
+            $description = (string)$xcal->description;
+
+            $activity = Activity::where('title', $title)->first();
+            if(!$activity) {
+                $activity = Activity::create([
+                    "title" => $title,
+                    "description" => $description,
+                    "weblink" => (string)$trumba->weblink,
+                    "image_url" => $image_url
+                ]);
+            }
+
+            $timezone = 'Australia/Brisbane';
+            $startTime = Carbon::parse($trumba->localstart, $timezone);
+            $endTime = Carbon::parse($trumba->localend, $timezone);
+
+            $timetable = Timetable::firstOrCreate([
+                "activity_id" => $activity->id,
+                "start_time" => $startTime,
+                "end_time" => $endTime
+            ]);
         }
-
-        $activities = Activity::all();
-        print_r($activities);
-
 //        $json = json_encode($xml);
 //        $data = json_decode($json,TRUE);
 
