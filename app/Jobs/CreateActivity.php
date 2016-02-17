@@ -13,6 +13,7 @@ class CreateActivity extends Job implements ShouldQueue
     use InteractsWithQueue, SerializesModels;
     protected $title;
     protected $description;
+    protected $weblink;
 
     function __construct($title, $description, $weblink)
     {
