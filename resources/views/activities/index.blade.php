@@ -18,4 +18,10 @@
         <h2>This Weekend</h2>
         @include('includes.activities', ["activities" => $thisWeekendsActivites])
     </div>
+
+    <div class="container">
+        <h2>All Activites</h2>
+        @include('includes.activities', ["activities" => $activities])
+    </div>
+
 @stop
