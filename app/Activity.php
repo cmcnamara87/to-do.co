@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model
 {
-    protected $fillable = ['title', 'description', 'image_url'];
+    protected $fillable = ['title', 'description', 'image_url', 'weblink'];
 
     /**
      * Get the timetables for the blog post.
