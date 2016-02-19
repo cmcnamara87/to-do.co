@@ -23,9 +23,9 @@ class ActivitiesController extends Controller
 
         $activities = Activity::all();
 
-        $timetableIds = Timetable::where('start_time', '>=', Carbon::now())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
+        $timetableIds = Timetable::where('end_time', '>=', Carbon::now())->where('end_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
         $todaysActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
-            $q->where('start_time', '>=', Carbon::now());
+            $q->where('end_time', '>=', Carbon::now());
         }))->get();
         $todaysActivites = $todaysActivites->sortBy(function ($activity, $key) {
             return count($activity['timetables']);
