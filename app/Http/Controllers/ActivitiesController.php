@@ -23,7 +23,7 @@ class ActivitiesController extends Controller
 
         $activities = Activity::all();
 
-        $timetableIds = Timetable::where('start_time', '>=', Carbon::today())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
+        $timetableIds = Timetable::where('start_time', '>=', Carbon::now())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
         $todaysActivites = Activity::whereIn('id', $timetableIds)->get();
 
         $timetableIds = Timetable::where('start_time', '>=', $saturday)->where('start_time', '<', $sunday->endOfDay())->lists('activity_id');

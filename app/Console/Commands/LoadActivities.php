@@ -76,8 +76,6 @@ class LoadActivities extends Command
             $trumba = $item->children($namespaces['x-trumba']);
             $xcal = $item->children($namespaces['xCal']);
 
-
-
             $image_url = '';
             foreach($trumba->customfield as $customField) {
                 if($customField->attributes()->name == "Event image") {
