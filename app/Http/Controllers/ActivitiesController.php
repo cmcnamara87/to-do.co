@@ -27,11 +27,17 @@ class ActivitiesController extends Controller
         $todaysActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('start_time', '>=', Carbon::now());
         }))->get();
+        $todaysActivites = $todaysActivites->sortBy(function ($activity, $key) {
+            return count($activity['timetables']);
+        });
 
         $timetableIds = Timetable::where('start_time', '>=', $saturday)->where('start_time', '<', $sunday->endOfDay())->lists('activity_id');
         $thisWeekendsActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('start_time', '>=', Carbon::now());
         }))->get();
+        $thisWeekendsActivites = $thisWeekendsActivites->sortBy(function ($activity, $key) {
+            return count($activity['timetables']);
+        });
 
         // load the view and pass the nerds
         return view('activities.index', compact('activities', 'todaysActivites', 'thisWeekendsActivites'));
