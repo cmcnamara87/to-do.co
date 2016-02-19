@@ -7,7 +7,7 @@
                         <img src="{{ asset($activity->image_url) }}" alt="" style="width:100%;"/>
                     </div>
                     <div class="panel-body">
-                        <h3>{{ $activity->title }}</h3>
+                        <h3><a href="{{ $activity->weblink }}">{{ $activity->title }}</a></h3>
                         <div>
                             {!! $activity->description !!}
                         </div>
