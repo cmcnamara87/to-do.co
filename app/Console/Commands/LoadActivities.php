@@ -100,7 +100,7 @@ class LoadActivities extends Command
                 $activity = Activity::create([
                     "title" => $title,
                     "description" => $description,
-                    "weblink" => (string)$trumba->weblink,
+                    "weblink" => (string)$item->link,
                     "image_url" => $image_url
                 ]);
             }
