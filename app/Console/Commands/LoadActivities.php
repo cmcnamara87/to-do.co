@@ -46,6 +46,10 @@ class LoadActivities extends Command
     {
         $this->info('Loading activites');
         Activity::truncate();
+        Timetable::truncate();
+
+        $this->goGroupon();
+
         $eventUrls = [
             "Southbank Parklands events" => "http://www.trumba.com/calendars/south-bank.rss?filterview=south+bank&filter4=_464155_&filterfield4=22542",
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
@@ -62,6 +66,10 @@ class LoadActivities extends Command
             $this->info($name);
             $this->go($url);
         }
+
+
+
+
     }
 
 
@@ -85,6 +93,7 @@ class LoadActivities extends Command
 
             $title = (string)$item->title;
             $description = (string)$xcal->description;
+            $this->info($trumba->weblink);
 
             $activity = Activity::where('title', $title)->first();
             if(!$activity) {
@@ -104,6 +113,31 @@ class LoadActivities extends Command
                 "activity_id" => $activity->id,
                 "start_time" => $startTime,
                 "end_time" => $endTime
+            ]);
+        }
+    }
+
+    private function goGroupon()
+    {
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20";
+        $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
+        foreach ($groupon->deals as $deal) {
+
+            $activity = Activity::create([
+                "title" => $deal->newsletterTitle,
+                "description" => $deal->highlightsHtml,
+                "weblink" => $deal->dealUrl,
+                "image_url" => $deal->largeImageUrl
+            ]);
+
+            $this->info('activity ' . $deal->title);
+
+            $start = Carbon::parse($deal->startAt);
+            $end = Carbon::parse($deal->endAt);
+            $timetable = Timetable::firstOrCreate([
+                "activity_id" => $activity->id,
+                "start_time" => $start,
+                "end_time" => $end
             ]);
         }
     }
