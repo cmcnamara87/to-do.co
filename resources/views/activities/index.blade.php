@@ -12,10 +12,10 @@
 
     <div class="container" >
         <div class="row">
-            @foreach (array_chunk($activities->all(), 3) as $activitiesRow)
+            @foreach (array_chunk($activities->all(), 4) as $activitiesRow)
                 <div class="row">
                     @foreach ($activitiesRow as $activity)
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="panel panel-default">
                                 <div>
                                     <img src="{{ asset($activity->image_url) }}" alt="" style="width:100%;"/>
