@@ -140,9 +140,5 @@ http://www.visitbrisbane.com.au/south-bank/whats-on/free/ginger-sports-soccer-at
                 "end_time" => $endTime
             ]);
         }
-//        $json = json_encode($xml);
-//        $data = json_decode($json,TRUE);
-
-//        print_r($data);
     }
 }
