@@ -9,18 +9,30 @@
                     <div class="panel-body">
                         <h3><a href="{{ $activity->weblink }}">{{ $activity->title }}</a></h3>
                         <div>
-                            {!! $activity->description !!}
+                            {!! str_limit(strip_tags($activity->description), 150, '...') !!}
                         </div>
                     </div>
                     @if($activity->timetables->count())
                     <ul class="list-group">
                         <?php $firstTimetable = $activity->timetables[0]; ?>
+                        @if($activity->timetables->count() == 1 && $firstTimetable->start_time->diff($firstTimetable->end_time)->days > 1)
+                            <li class="list-group-item">
+                                <strong>Every day</strong> <span class="text-muted">until {{ $firstTimetable->end_time->format('l jS \\of F Y') }}</span>
+                            </li>
+                        @else
                         <li class="list-group-item">
-                            {{ $firstTimetable->start_time->toDayDateTimeString() }} -
-                            {{ $firstTimetable->end_time->toDayDateTimeString() }}
+                            <strong>{{ $firstTimetable->start_time->format('l') }}</strong>
+                            {{ $firstTimetable->start_time->format('h:i A') }} -
+                            {{ $firstTimetable->end_time->format('h:i A') }}
+                            @if($activity->timetables->count() > 1)
+                                <span class="text-muted">+ {{ $activity->timetables->count() - 1 }} more days</span>
+                            @endif
                         </li>
-                        @if($activity->timetables->count() > 1)
-                        <li class="list-group-item">+ {{ $activity->timetables->count() - 1 }} more times</li>
+                        @if($activity->timetables->count() == 1)
+                        <li class="list-group-item list-group-item-info">
+                            <img src="{{ asset('images/animat-lightbulb-color.gif') }}" alt="" style="width:20px;position:relative;top:-1px;"/>
+                            Today Only</li>
+                        @endif
                         @endif
                     </ul>
                     @endif
