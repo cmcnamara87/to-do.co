@@ -22,8 +22,6 @@ class ActivitiesController extends Controller
             $saturday = Carbon::parse('Saturday');
         }
 
-        $activities = Activity::all();
-
         $timetableIds = Timetable::where('end_time', '>=', Carbon::now())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
         $todaysActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('end_time', '>=', Carbon::now());
@@ -48,6 +46,6 @@ class ActivitiesController extends Controller
         });
 
         // load the view and pass the nerds
-        return view('activities.index', compact('activities', 'todaysActivites', 'thisWeekendsActivites'));
+        return view('activities.index', compact('todaysActivites', 'thisWeekendsActivites'));
     }
 }
