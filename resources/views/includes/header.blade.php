@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-fixed-top" style="margin-bottom: 0;">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -9,7 +9,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">ToDoCo</a>
+            <a class="navbar-brand" href="/">
+                <img src="{{ asset('images/animat-image-color.gif') }}" alt="" style="    width: 70px;
+    margin-left: -20px;
+    margin-right: -10px;
+    margin-top: -25px;display:inline-block;"/>
+                <span style="position:relative;top:-10px;">TodoCo</span></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
