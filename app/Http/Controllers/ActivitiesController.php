@@ -48,4 +48,9 @@ class ActivitiesController extends Controller
         // load the view and pass the nerds
         return view('activities.index', compact('todaysActivites', 'thisWeekendsActivites'));
     }
+
+    public function show($id) {
+        $activity = Activity::find($id);
+        return view('activities.show', compact('activity'));
+    }
 }
