@@ -12,14 +12,18 @@
                             {!! $activity->description !!}
                         </div>
                     </div>
+                    @if($activity->timetables->count())
                     <ul class="list-group">
-                        @foreach($activity->timetables as $timetable)
-                            <li class="list-group-item">
-                                {{ $timetable->start_time->toDayDateTimeString() }} -
-                                {{ $timetable->end_time->toDayDateTimeString() }}
-                            </li>
-                        @endforeach
+                        <?php $firstTimetable = $activity->timetables[0]; ?>
+                        <li class="list-group-item">
+                            {{ $firstTimetable->start_time->toDayDateTimeString() }} -
+                            {{ $firstTimetable->end_time->toDayDateTimeString() }}
+                        </li>
+                        @if($activity->timetables->count() > 1)
+                        <li class="list-group-item">+ {{ $activity->timetables->count() - 1 }} more times</li>
+                        @endif
                     </ul>
+                    @endif
                 </div>
             </div>
         @endforeach
