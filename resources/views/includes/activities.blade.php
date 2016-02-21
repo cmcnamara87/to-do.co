@@ -4,12 +4,12 @@
             <div class="col-sm-3">
                 <div class="panel panel-default">
                     <div>
-                        <a href="{{ url("activities/{$activity->id}") }}">
+                        <a href="{{ url("{$activity->slug}") }}">
                             <img src="{{ asset($activity->image_url) }}" alt="{{ $activity->title }}" style="width:100%;"/>
                         </a>
                     </div>
                     <div class="panel-body">
-                        <h3><a href="{{ url("activities/{$activity->id}") }}">{{ $activity->title }}</a></h3>
+                        <h3><a href="{{ url("{$activity->slug}") }}">{{ $activity->title }}</a></h3>
                         <div>
                             {!! str_limit(strip_tags($activity->description), 150, '...') !!}
                         </div>

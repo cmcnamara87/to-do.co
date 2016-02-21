@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ActivitiesController extends Controller
@@ -25,12 +26,9 @@ class ActivitiesController extends Controller
         $timetableIds = Timetable::where('end_time', '>=', Carbon::now())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
         $todaysActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('end_time', '>=', Carbon::now());
-        }))->get();
+        }))->orderBy(DB::raw('RAND()'))->take(10)->get();
         $todaysActivites = $todaysActivites->sortBy(function ($activity, $key) {
             return array_reduce($activity->timetables->all(), function($carry, $timetable) {
-                Log::info($timetable->start_time->toDateTimeString());
-                Log::info($timetable->end_time->toDateTimeString());
-                Log::info($timetable->start_time->diff($timetable->end_time)->days);
                 $diffInDays =  $timetable->start_time->diff($timetable->end_time)->days;
                 $carry += max($diffInDays, 1);
                 return $carry;
@@ -40,7 +38,7 @@ class ActivitiesController extends Controller
         $timetableIds = Timetable::where('start_time', '>=', $saturday)->where('start_time', '<', $sunday->endOfDay())->lists('activity_id');
         $thisWeekendsActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('start_time', '>=', Carbon::now());
-        }))->get();
+        }))->orderBy(DB::raw('RAND()'))->take(10)->get();
         $thisWeekendsActivites = $thisWeekendsActivites->sortBy(function ($activity, $key) {
             return count($activity['timetables']);
         });
@@ -49,8 +47,7 @@ class ActivitiesController extends Controller
         return view('activities.index', compact('todaysActivites', 'thisWeekendsActivites'));
     }
 
-    public function show($id) {
-        $activity = Activity::find($id);
+    public function show($activity) {
         return view('activities.show', compact('activity'));
     }
 }

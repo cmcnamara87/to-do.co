@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Activity;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -24,8 +25,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        //
-
+        $router->model('activities', Activity::class);
         parent::boot($router);
     }
 
