@@ -1,4 +1,9 @@
 @charset "UTF-8";
+.jumbotron {
+  text-align: center; }
+  .jumbotron h1 {
+    font-weight: 100; }
+
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -4258,7 +4263,7 @@ a.badge:hover, a.badge:focus {
   padding-bottom: 30px;
   margin-bottom: 30px;
   color: white;
-  background-color: #0088FF; }
+  background-color: #85C996; }
   .jumbotron h1,
   .jumbotron .h1 {
     color: inherit; }
@@ -4267,7 +4272,7 @@ a.badge:hover, a.badge:focus {
     font-size: 21px;
     font-weight: 200; }
   .jumbotron > hr {
-    border-top-color: #006dcc; }
+    border-top-color: #62b978; }
   .container .jumbotron,
   .container-fluid .jumbotron {
     border-radius: 6px;
