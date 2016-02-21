@@ -1,9 +1,4 @@
 @charset "UTF-8";
-.jumbotron {
-  text-align: center; }
-  .jumbotron h1 {
-    font-weight: 100; }
-
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -5756,5 +5751,13 @@ button.close {
 
 body {
   padding-top: 50px; }
+
+body {
+  background-color: #eee; }
+
+.jumbotron {
+  text-align: center; }
+  .jumbotron h1 {
+    font-weight: 100; }
 
 /*# sourceMappingURL=app.css.map */

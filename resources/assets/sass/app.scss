@@ -3,13 +3,18 @@ $navbar-default-bg: white;
 $jumbotron-bg: #85C996;//#204F84;//#FED000;
 $jumbotron-color: white;
 
+
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+
+body { padding-top: 50px; }
+
+body {
+  background-color: #eee;
+}
+
 .jumbotron {
   text-align: center;
   h1 {
     font-weight: 100;
   }
 }
-
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-
-body { padding-top: 50px; }
