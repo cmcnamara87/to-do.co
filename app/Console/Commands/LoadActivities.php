@@ -57,7 +57,7 @@ class LoadActivities extends Command
                 "title" => $movie->title,
                 "description" => $movie->synopsis,
                 "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
-                "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
+                "image_url" => "http://moviesowl.com/{$movie->poster}"
             ]);
 
             $this->info('activity ' . $movie->title);
