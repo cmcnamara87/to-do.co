@@ -48,6 +48,26 @@ class LoadActivities extends Command
         Activity::truncate();
         Timetable::truncate();
 
+        // movies
+        // just get the movies from indro
+        $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
+        foreach($json->data as $movie) {
+            $fakeSlug = preg_replace('/[^a-z\d]+/i', '-', $movie->title);
+            $activity = Activity::create([
+                "title" => $movie->title,
+                "description" => $movie->synopsis,
+                "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
+                "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
+            ]);
+
+            $this->info('activity ' . $movie->title);
+            $timetable = Timetable::firstOrCreate([
+                "activity_id" => $activity->id,
+                "start_time" => Carbon::today(),
+                "end_time" => Carbon::parse("next thursday")
+            ]);
+        }
+
         $this->goGroupon();
 
         $eventUrls = [
@@ -89,10 +109,6 @@ class LoadActivities extends Command
             $this->info($name);
             $this->go($url);
         }
-
-
-
-
     }
 
 
