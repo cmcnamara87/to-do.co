@@ -52,9 +52,9 @@ class LoadActivities extends Command
         // just get the movies from indro
         $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
         foreach($json->data as $movie) {
-            $fakeSlug = preg_replace('/[^a-z\d]+/i', '-', $movie->title);
+            $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
             $activity = Activity::create([
-                "title" => $movie->title,
+                "title" => "Watch " . $movie->title . " at the Cinemas",
                 "description" => $movie->synopsis,
                 "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
                 "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
@@ -71,7 +71,7 @@ class LoadActivities extends Command
         $this->goGroupon();
 
         $eventUrls = [
-            "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=688783%2c681701%2c782935%2c812762",
+            "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Business events" => "http://www.trumba.com/calendars/BiB.rss",
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
             "Brisbane Botanic Gardens events" => "http://www.trumba.com/calendars/brisbane-botanic-gardens.rss",
@@ -82,12 +82,12 @@ class LoadActivities extends Command
             "Movies" => "http://www.trumba.com/calendars/type.rss?filterview=movies&filter1=_178865_&filterfield1=21859",
             "Visible ink events" => "http://www.trumba.com/calendars/visble-ink.rss",
             "Teen events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=teens",
-            "Southbank Parklands events" => "http://www.trumba.com/calendars/south-bank.rss?filterview=south+bank&filter4=_464155_&filterfield4=22542",
+            "Southbank Parklands events" => "http://www.trumba.com/calendars/south-bank.rss?filterview=southbank&filter4=_464155_&filterfield4=22542",
             "Sir Thomas Brisbane Planetarium events" => "http://www.trumba.com/calendars/planetarium.rss",
             "Riverstage events" => "http://www.trumba.com/calendars/brisbane-riverstage.rss",
             "Museum of Brisbane events" => "http://www.trumba.com/calendars/mob.rss",
             "LIVE events" => "http://www.trumba.com/calendars/LIVE.rss",
-            // "King George Square events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=688783%2c681701%2c782935%2c812762",
+            // "King George Square events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Kids aged 6 to 12 events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=kids_6_12",
             "Infants and toddlers events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=infants_toddlers",
             "Green events" => "http://www.trumba.com/calendars/green-events.rss?filterview=green_events",
@@ -158,7 +158,7 @@ class LoadActivities extends Command
 
     private function goGroupon()
     {
-        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=100";
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
         foreach ($groupon->deals as $deal) {
 

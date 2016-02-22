@@ -24,16 +24,21 @@ class ActivitiesController extends Controller
         }
 
         $timetableIds = Timetable::where('end_time', '>=', Carbon::now())->where('start_time', '<', Carbon::today()->endOfDay())->lists('activity_id');
-        $todaysActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
+        $todaysActivitesQuery = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
             $q->where('end_time', '>=', Carbon::now());
-        }))->orderBy(DB::raw('RAND()'))->take(10)->get();
-        $todaysActivites = $todaysActivites->sortBy(function ($activity, $key) {
-            return array_reduce($activity->timetables->all(), function($carry, $timetable) {
-                $diffInDays =  $timetable->start_time->diff($timetable->end_time)->days;
-                $carry += max($diffInDays, 1);
-                return $carry;
-            }, 0);
-        });
+        }));
+
+        $todaysActivites = $todaysActivitesQuery->orderBy(DB::raw('RAND()'))->take(10)->get();
+//        $todaysActivites = $todaysActivites->sortBy(function ($activity, $key) {
+//            return array_reduce($activity->timetables->all(), function($carry, $timetable) {
+//                $diffInDays =  $timetable->start_time->diff($timetable->end_time)->days;
+//                $carry += max($diffInDays, 1);
+//                return $carry;
+//            }, 0);
+//        });
+
+//        $todaysActivites = $todaysActivitesQuery->orderBy(DB::raw('RAND()'))->take(10)->get();
+
 
         $timetableIds = Timetable::where('start_time', '>=', $saturday)->where('start_time', '<', $sunday->endOfDay())->lists('activity_id');
         $thisWeekendsActivites = Activity::whereIn('id', $timetableIds)->with(array('timetables' => function ($q) {
@@ -44,7 +49,7 @@ class ActivitiesController extends Controller
         });
 
         // load the view and pass the nerds
-        return view('activities.index', compact('todaysActivites', 'thisWeekendsActivites'));
+        return view('activities.index', compact('todaysActivites', 'asdf', 'thisWeekendsActivites'));
     }
 
     public function show($activity) {

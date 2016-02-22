@@ -10,12 +10,13 @@
         </div>
     </div>
     <div class="container">
-        <h2>Today</h2>
+        <h2>Featured</h2>
+        <h3>Today</h3>
         @include('includes.activities', ["activities" => $todaysActivites])
     </div>
 
-    <div class="container">
-        <h2>This Weekend</h2>
-        @include('includes.activities', ["activities" => $thisWeekendsActivites])
-    </div>
+    {{--<div class="container">--}}
+        {{--<h2>This Weekend</h2>--}}
+        {{--@include('includes.activities', ["activities" => $thisWeekendsActivites])--}}
+    {{--</div>--}}
 @stop
