@@ -188,7 +188,7 @@ class LoadActivities extends Command
                 "date" => $day
             ]);
         }
-        $user->photos()->delete();
+        $feature->activities()->delete();
         $feature->activities()->saveMany($activities);
     }
 
