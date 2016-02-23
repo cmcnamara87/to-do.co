@@ -39,7 +39,7 @@ Route::get('sitemap', function(){
                 'title' => $activity->title,
                 'caption' => $activity->description
             ]];
-            $sitemap->add(url("{$activity->slug}"), $activity->updated_at, 0.8, 'yearly', $images);
+            $sitemap->add(url("{$activity->slug}"), $activity->updated_at, 0.5, 'yearly', $images);
         }
     }
     // show your sitemap (options: 'xml' (default), 'html', 'txt', 'ror-rss', 'ror-rdf')
