@@ -157,8 +157,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
-
-
+        'Roumen\Sitemap\SitemapServiceProvider',
     ],
 
     /*
