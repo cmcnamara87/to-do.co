@@ -180,9 +180,15 @@ class LoadActivities extends Command
         });
 
         $activities = $activities->values()->take(10);
-        $feature = Feature::firstOrCreate([
-            "date" => $day
-        ]);
+
+
+        $feature = Feature::where('date', $day)->first();
+        if(!$feature) {
+            $feature = Feature::firstOrCreate([
+                "date" => $day
+            ]);
+        }
+        $user->photos()->delete();
         $feature->activities()->saveMany($activities);
     }
 

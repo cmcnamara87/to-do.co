@@ -10,13 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/{activities}', 'ActivitiesController@show');
 
-Route::get('/', 'ActivitiesController@index');
-Route::get('/things-to-do-in-brisbane', 'ActivitiesController@index');
+Route::get('/', 'FeaturesController@index');
+Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
 Route::resource('activities', 'ActivitiesController');
+Route::resource('features', 'FeaturesController');
 
 
+Route::get('/{activities}', 'ActivitiesController@show');
 /*
 |--------------------------------------------------------------------------
 | Application Routes

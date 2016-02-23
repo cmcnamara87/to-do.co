@@ -10,7 +10,10 @@
         </div>
     </div>
     <div class="container">
-        <h2>Activities</h2>
-        @include('includes.activities', ["activities" => $activities])
+        <h2>Featured</h2>
+        @foreach($features as $feature)
+            <h3>{{ $feature->date->format('l') }}</h3>
+            @include('includes.feature', ["feature" => $feature])
+        @endforeach
     </div>
 @stop
