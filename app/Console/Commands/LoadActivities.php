@@ -3,11 +3,13 @@
 namespace App\Console\Commands;
 
 use App\Activity;
+use App\Feature;
 use App\Jobs\CreateActivity;
 use App\Timetable;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Support\Facades\DB;
 
 class LoadActivities extends Command
 {
@@ -45,15 +47,13 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-        Activity::truncate();
-        Timetable::truncate();
 
         // movies
         // just get the movies from indro
         $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
-        foreach($json->data as $movie) {
+        foreach ($json->data as $movie) {
             $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
-            $activity = Activity::create([
+            $activity = Activity::firstOrCreate([
                 "title" => "Watch " . $movie->title . " at the Cinemas",
                 "description" => $movie->synopsis,
                 "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
@@ -105,17 +105,20 @@ class LoadActivities extends Command
 
         ];
 
-        foreach($eventUrls as $name => $url) {
+        foreach ($eventUrls as $name => $url) {
             $this->info($name);
             $this->go($url);
         }
+
+        $this->createFeaturedForDay(Carbon::today());
     }
 
 
-    function go($url) {
+    function go($url)
+    {
         // south bank feed
         $xml = simplexml_load_file($url);
-        foreach($xml->channel->item as $item) {
+        foreach ($xml->channel->item as $item) {
             $this->info($item->title);
 
             // namespaces
@@ -124,8 +127,8 @@ class LoadActivities extends Command
             $xcal = $item->children($namespaces['xCal']);
 
             $image_url = '';
-            foreach($trumba->customfield as $customField) {
-                if($customField->attributes()->name == "Event image") {
+            foreach ($trumba->customfield as $customField) {
+                if ($customField->attributes()->name == "Event image") {
                     $image_url = (string)$customField;
                 }
             }
@@ -135,7 +138,7 @@ class LoadActivities extends Command
             $this->info($trumba->weblink);
 
             $activity = Activity::where('title', $title)->first();
-            if(!$activity) {
+            if (!$activity) {
                 $activity = Activity::create([
                     "title" => $title,
                     "description" => $description,
@@ -156,13 +159,40 @@ class LoadActivities extends Command
         }
     }
 
+    function createFeaturedForDay(Carbon $day)
+    {
+        $previousFeaturedActivityIds = DB::table('activity_feature')->lists('activity_id');
+        $activities = Activity::whereHas('timetables', function($query) use ($day, $previousFeaturedActivityIds) {
+            $end = $day->copy()->endOfDay();
+            $query->where('start_time', '<=', $end);
+            $query->where('end_time', '>=', $day);
+            $query->whereNotIn('activity_id', $previousFeaturedActivityIds);
+        })->get();
+
+        // sort them by some magical formula (its the number of days)
+        $activities = $activities->sortBy(function ($activity, $key) {
+            $score = array_reduce($activity->timetables->all(), function ($carry, $timetable) {
+                $diffInDays = $timetable->start_time->diff($timetable->end_time)->days;
+                $carry += max($diffInDays, 1);
+                return $carry;
+            }, 0);
+            return $score;
+        });
+
+        $activities = $activities->values()->take(10);
+        $feature = Feature::firstOrCreate([
+            "date" => $day
+        ]);
+        $feature->activities()->saveMany($activities);
+    }
+
     private function goGroupon()
     {
         $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
         foreach ($groupon->deals as $deal) {
 
-            $activity = Activity::create([
+            $activity = Activity::firstOrCreate([
                 "title" => $deal->newsletterTitle,
                 "description" => $deal->highlightsHtml,
                 "weblink" => $deal->dealUrl,

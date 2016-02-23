@@ -25,4 +25,9 @@ class Activity extends Model implements SluggableInterface
     {
         return $this->hasMany(Timetable::class);
     }
+
+    public function features()
+    {
+        return $this->belongsToMany(Feature::class);
+    }
 }
