@@ -11,8 +11,11 @@
                     </div>
                     <div class="col-sm-8">
                         <h1>{{ $activity->title }}</h1>
-                        {{ $activity->description }}
-                        <a href="{{ $activity->weblink }}">{{ $activity->weblink }}</a>
+                        {!! $activity->description !!}
+                        <div>
+                            <a href="{{ $activity->weblink }}" class="btn btn-primary">Go to Activity</a>
+                        </div>
+
                     </div>
                 </div>
             </div>
