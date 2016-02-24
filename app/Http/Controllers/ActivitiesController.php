@@ -23,6 +23,12 @@ class ActivitiesController extends Controller
             $q->where('end_time', '>=', Carbon::now());
         }])->get();
 
+        // sort them by some magical formula (its the number of days)
+        $activities = $activities->sortBy(function ($activity, $key) {
+            $nextTimetable = $activity->timetables[0];
+            return Carbon::now()->diffInMinutes($nextTimetable->start_time);
+        });
+
         return view('activities.index', compact('activities'));
     }
 
