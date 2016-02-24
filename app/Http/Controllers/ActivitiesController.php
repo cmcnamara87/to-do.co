@@ -19,9 +19,9 @@ class ActivitiesController extends Controller
         $day = Carbon::now();
         $activities = Activity::whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
-        })->with(array('timetables' => function ($q) {
+        })->with(['timetables' => function ($q) {
             $q->where('end_time', '>=', Carbon::now());
-        }))->get();
+        }])->get();
 
         return view('activities.index', compact('activities'));
     }
