@@ -15,20 +15,22 @@
                         </div>
                     </div>
                     <ul class="list-group">
-                        @foreach($activity->timetables as $timetable)
-                            <li class="list-group-item">
-                                @if($timetable->start_time->day == $timetable->end_time->day)
-                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->start_time->format('h:i A') }} -
-                                    {{ $timetable->end_time->format('h:i A') }}
-                                @else
-                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->start_time->format('h:i A') }} -
-                                    <strong>{{ $timetable->end_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->end_time->format('h:i A') }}
-                                @endif
-                            </li>
-                        @endforeach
+                        <?php $firstTimetable = $activity->timetables[0]; ?>
+                        <li class="list-group-item">
+                            @if($firstTimetable->start_time->day == $firstTimetable->end_time->day)
+                                <strong>{{ $firstTimetable->start_time->format('l j F Y') }}</strong>
+                                {{ $firstTimetable->start_time->format('h:i A') }} -
+                                {{ $firstTimetable->end_time->format('h:i A') }}
+                            @else
+                                <strong>{{ $firstTimetable->start_time->format('l j F Y') }}</strong>
+                                {{ $firstTimetable->start_time->format('h:i A') }} -
+                                <strong>{{ $firstTimetable->end_time->format('l j F Y') }}</strong>
+                                {{ $firstTimetable->end_time->format('h:i A') }}
+                            @endif
+                        </li>
+                        <li class="list-group-item">
+                            + {{ $activity->timetables->count() - 1 }} more times
+                        </li>
                     </ul>
                 </div>
             </div>
