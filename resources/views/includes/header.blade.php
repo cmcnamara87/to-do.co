@@ -26,6 +26,9 @@
                 <li class="{{ Request::is('activities') ? 'active' : '' }}">
                     <a href="{{ url('/activities') }}">Browse</a>
                 </li>
+                <li class="{{ Request::is('categories') ? 'active' : '' }}">
+                    <a href="{{ url('/categories') }}">Categories</a>
+                </li>
             </ul>
             {{--<form class="navbar-form navbar-right" role="search">--}}
                 {{--<div class="form-group">--}}

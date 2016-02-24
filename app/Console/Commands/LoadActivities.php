@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Activity;
+use App\Category;
 use App\Feature;
 use App\Jobs\CreateActivity;
 use App\Timetable;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class LoadActivities extends Command
 {
@@ -47,29 +49,8 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-
-        // movies
-        // just get the movies from indro
-        $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
-        foreach ($json->data as $movie) {
-            $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
-            $activity = Activity::firstOrCreate([
-                "title" => "Watch " . $movie->title . " at the Cinemas",
-                "description" => $movie->synopsis,
-                "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
-                "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
-            ]);
-
-            $this->info('activity ' . $movie->title);
-            $timetable = Timetable::firstOrCreate([
-                "activity_id" => $activity->id,
-                "start_time" => Carbon::today(),
-                "end_time" => Carbon::parse("next thursday")
-            ]);
-        }
-
+        $this->loadMovies();
         $this->goGroupon();
-
         $eventUrls = [
             "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Business events" => "http://www.trumba.com/calendars/BiB.rss",
@@ -105,19 +86,25 @@ class LoadActivities extends Command
 
         ];
 
-        foreach ($eventUrls as $name => $url) {
-            $this->info($name);
-            $this->go($url);
+        foreach ($eventUrls as $categoryName => $url) {
+            $this->info($categoryName);
+            $this->go($categoryName, $url);
         }
 
         $this->createFeaturedForDay(Carbon::today());
     }
 
 
-    function go($url)
+    function go($categoryName, $url)
     {
+        $category = Category::firstOrCreate([
+            "name" => str_replace("events", "", $categoryName)
+        ]);
+
         // south bank feed
         $xml = simplexml_load_file($url);
+        $activityIds = [];
+
         foreach ($xml->channel->item as $item) {
             $this->info($item->title);
 
@@ -146,6 +133,7 @@ class LoadActivities extends Command
                     "image_url" => $image_url
                 ]);
             }
+            $activityIds[] = $activity->id;
 
             $timezone = 'Australia/Brisbane';
             $startTime = Carbon::parse($trumba->localstart, $timezone);
@@ -156,7 +144,10 @@ class LoadActivities extends Command
                 "start_time" => $startTime,
                 "end_time" => $endTime
             ]);
+            Log::info('Adding tag ' . $category->name . ' for ' . $activity->title);
+            // save it
         }
+        $category->activities()->sync($activityIds, false);
     }
 
     function createFeaturedForDay(Carbon $day)
@@ -170,7 +161,7 @@ class LoadActivities extends Command
         })->get();
 
         // sort them by some magical formula (its the number of days)
-        $activities = $activities->sortBy(function ($activity, $key) {
+        $activities = $activities->sortBy(function ($activity, $key) use ($day) {
             $score = array_reduce($activity->timetables->all(), function ($carry, $timetable) {
                 $diffInDays = $timetable->start_time->diff($timetable->end_time)->days;
                 $carry += max($diffInDays, 1);
@@ -194,18 +185,18 @@ class LoadActivities extends Command
 
     private function goGroupon()
     {
-        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20";
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=100";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
-        foreach ($groupon->deals as $deal) {
-
-            $activity = Activity::firstOrCreate([
-                "title" => $deal->newsletterTitle,
+        $activityIds = array_map(function($deal) {
+            $activity = Activity::firstOrCreate(['title' => $deal->newsletterTitle]);
+            $activity->fill([
                 "description" => $deal->highlightsHtml,
                 "weblink" => $deal->dealUrl,
                 "image_url" => $deal->largeImageUrl
             ]);
+            $activity->save();
 
-            $this->info('activity ' . $deal->title);
+            $this->info('created activity ' . $activity->title);
 
             $start = Carbon::parse($deal->startAt);
             $end = Carbon::parse($deal->endAt);
@@ -214,6 +205,58 @@ class LoadActivities extends Command
                 "start_time" => $start,
                 "end_time" => $end
             ]);
-        }
+
+            // do category
+            $categoryIds = array_reduce($deal->tags, function($carry, $tag) {
+                // fix up some weird groupon syntax e.g. RESTAURANT1 as the tag
+                $noNumbers = preg_replace('/\d/', '', $tag->name);
+                $cleanName = str_replace('_', ' ', $noNumbers);
+                $categoryName = strtolower($cleanName);
+                if($categoryName == "australian") {
+                    return $carry;
+                }
+                $category = Category::firstOrCreate([
+                    "name" => $categoryName
+                ]);
+                $carry[] = $category->id;
+                return $carry;
+            }, []);
+            $activity->categories()->sync($categoryIds, false);
+
+            return $activity->id;
+        }, $groupon->deals);
+    }
+
+    private function loadMovies()
+    {
+        // movies
+        // just get the movies from indro
+        $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
+        $category = Category::firstOrCreate([
+            "name" => "movies"
+        ]);
+
+        $activityIds = array_map(function($movie) use ($category) {
+            $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
+            $activity = Activity::firstOrCreate(['title' => "Watch " . $movie->title . " at the Cinemas"]);
+            $activity->fill([
+                "description" => $movie->synopsis,
+                "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
+                "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
+            ]);
+            $activity->save();
+
+            $this->info('activity ' . $activity->title);
+            $timetable = Timetable::firstOrCreate([
+                "activity_id" => $activity->id,
+                "start_time" => Carbon::today(),
+                "end_time" => Carbon::parse("next thursday")
+            ]);
+            Log::info('Adding tag ' . $category->name . ' for ' . $activity->title);
+            // save it
+            return $activity->id;
+        }, $json->data);
+        $category->activities()->sync($activityIds, false);
+
     }
 }

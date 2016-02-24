@@ -30,4 +30,8 @@ class Activity extends Model implements SluggableInterface
     {
         return $this->belongsToMany(Feature::class);
     }
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }
