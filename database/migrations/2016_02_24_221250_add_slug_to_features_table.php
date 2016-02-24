@@ -17,6 +17,10 @@ class AddSlugToFeaturesTable extends Migration
         Schema::table('features', function (Blueprint $table) {
             $table->string('slug')->nullable();
         });
+        $features = \App\Feature::all();
+        foreach($features as $feature) {
+            $feature->save();
+        }
     }
 
     /**

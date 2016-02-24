@@ -17,6 +17,10 @@ class AddSlugToCategoriesTable extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->string('slug')->nullable();
         });
+        $categories = \App\Category::all();
+        foreach($categories as $category) {
+            $category->save();
+        }
     }
 
     /**
