@@ -48,9 +48,46 @@ class LoadActivities extends Command
      */
     public function handle()
     {
+        Category::truncate();
+        DB::table('activity_category')->truncate();
+
         $this->info('Loading activites');
         $this->loadMovies();
-        $this->goGroupon();
+        $grouponCategories = [
+//            "automotive",
+//            "auto-and-home-improvement",
+//            "accommodation",
+            "beauty-and-spas",
+//            "baby-kids-and-toys",
+//            "bed-and-breakfast-travel",
+            "food-and-drink",
+//            "collectibles",
+//            "cabin-travel",
+            "health-and-fitness",
+//            "electronics-goods",
+//            "cruise-travel",
+//            "home-improvement",
+            "entertainment-and-media",
+//            "hotels",
+            "local-services",
+//            "food-and-drink-goods",
+//            "resort-travel",
+            "shopping",
+//            "health-and-beauty-goods",
+//            "tour-travel",
+            "things-to-do",
+//            "home-and-garden-goods",
+//            "vacation-rental-travel",
+// 	        "household-essentials",
+// 	        "jewelry-and-watches",
+// 	        "men",
+// 	        "sports-and-outdoors",
+// 	        "women"
+        ];
+        foreach($grouponCategories as $grouponCategory) {
+            $this->goGroupon($grouponCategory);
+        }
+
         $eventUrls = [
             "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Business events" => "http://www.trumba.com/calendars/BiB.rss",
@@ -183,10 +220,17 @@ class LoadActivities extends Command
         $feature->activities()->saveMany($activities);
     }
 
-    private function goGroupon()
+    private function goGroupon($grouponCategory)
     {
-        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=100";
+        $category = Category::firstOrCreate([
+            "name" => str_replace('-', ' ', $grouponCategory)
+        ]);
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20&filters=category:$grouponCategory";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
+        if(!isset($groupon->deals)) {
+            Log::info('no deails found');
+            return;
+        }
         $activityIds = array_map(function($deal) {
             $activity = Activity::firstOrCreate(['title' => $deal->newsletterTitle]);
             $activity->fill([
@@ -207,24 +251,9 @@ class LoadActivities extends Command
             ]);
 
             // do category
-            $categoryIds = array_reduce($deal->tags, function($carry, $tag) {
-                // fix up some weird groupon syntax e.g. RESTAURANT1 as the tag
-                $noNumbers = preg_replace('/\d/', '', $tag->name);
-                $cleanName = str_replace('_', ' ', $noNumbers);
-                $categoryName = strtolower($cleanName);
-                if($categoryName == "australian") {
-                    return $carry;
-                }
-                $category = Category::firstOrCreate([
-                    "name" => $categoryName
-                ]);
-                $carry[] = $category->id;
-                return $carry;
-            }, []);
-            $activity->categories()->sync($categoryIds, false);
-
             return $activity->id;
         }, $groupon->deals);
+        $category->activities()->sync($activityIds, false);
     }
 
     private function loadMovies()
