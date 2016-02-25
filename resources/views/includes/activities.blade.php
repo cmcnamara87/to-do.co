@@ -13,8 +13,16 @@
                         <div>
                             {!! str_limit(strip_tags($activity->description), 150, '...') !!}
                         </div>
+                        <div>
+                            <ul>
+                                @foreach($activity->categories as $category)
+                                <li>{{ $category->name }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
                     <ul class="list-group">
+
                         <?php $firstTimetable = $activity->timetables[0]; ?>
                         <li class="list-group-item">
                             @if($firstTimetable->start_time->day == $firstTimetable->end_time->day)
