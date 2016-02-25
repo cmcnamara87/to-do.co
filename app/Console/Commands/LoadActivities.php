@@ -49,7 +49,7 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-        $this->loadMovies();
+//        $this->loadMovies();
         $grouponCategories = [
 //            "automotive",
 //            "auto-and-home-improvement",
@@ -81,8 +81,8 @@ class LoadActivities extends Command
 // 	        "sports-and-outdoors",
 // 	        "women"
         ];
-        foreach($grouponCategories as $grouponCategory) {
-            $this->goGroupon($grouponCategory);
+        foreach ($grouponCategories as $grouponCategory) {
+//            $this->goGroupon($grouponCategory);
         }
 
         $eventUrls = [
@@ -121,8 +121,8 @@ class LoadActivities extends Command
         ];
 
         foreach ($eventUrls as $categoryName => $url) {
-            $this->info($categoryName);
-            $this->go($categoryName, $url);
+//            $this->info($categoryName);
+//            $this->go($categoryName, $url);
         }
 
         $this->createFeaturedForDay(Carbon::today());
@@ -132,7 +132,7 @@ class LoadActivities extends Command
     function go($categoryName, $url)
     {
         $category = Category::firstOrCreate([
-            "name" => str_replace("events", "", $categoryName)
+            "name" => trim(str_replace("events", "", $categoryName))
         ]);
 
         // south bank feed
@@ -186,8 +186,11 @@ class LoadActivities extends Command
 
     function createFeaturedForDay(Carbon $day)
     {
-        $previousFeaturedActivityIds = DB::table('activity_feature')->lists('activity_id');
-        $activities = Activity::whereHas('timetables', function($query) use ($day, $previousFeaturedActivityIds) {
+        Feature::truncate();
+        DB::table('activity_feature')->truncate();
+
+        $previousFeaturedActivityIds = []; //DB::table('activity_feature')->lists('activity_id');
+        $activities = Activity::whereHas('timetables', function ($query) use ($day, $previousFeaturedActivityIds) {
             $end = $day->copy()->endOfDay();
             $query->where('start_time', '<=', $end);
             $query->where('end_time', '>=', $day);
@@ -195,26 +198,81 @@ class LoadActivities extends Command
         })->get();
 
         // sort them by some magical formula (its the number of days)
-        $activities = $activities->sortBy(function ($activity, $key) use ($day) {
-            $score = array_reduce($activity->timetables->all(), function ($carry, $timetable) {
-                $diffInDays = $timetable->start_time->diff($timetable->end_time)->days;
-                $carry += max($diffInDays, 1);
-                return $carry;
-            }, 0);
+        $activities = $activities->sortByDesc(function ($activity, $key) use ($day) {
+
+            $this->info($activity->title);
+
+
+            $nextTimetable = $activity->timetables[0];
+            $end = $day->copy()->endOfDay();
+            $score = 0;
+            // is it on today?
+            if ($nextTimetable->start_time->lte($end) && $nextTimetable->end_time->gte($day)) {
+                $this->info('- Today 10');
+                $score += 10;
+            }
+            // is it only on today, big bump
+            // is it only on today, big bump
+            $this->info(' - Count ' . json_encode($activity->timetables));
+            $this->info(' - Count ' . json_encode($activity->categories));
+            if ($activity->timetables->count() == 1 &&
+                $nextTimetable->start_time->diffInHours($nextTimetable->end_time) <= 24
+            ) {
+                $this->info('- Only Today 10');
+                $score += 20;
+                // is it starting soon
+//                $nextTimetable->start_time->diffInHours(Carbon::)
+            }
+
+            // is it in good categories
+            $categoryNames = $activity->categories->lists('name')->all();
+            // remove spaces!
+            $categoryNames = array_map(function($name) {
+                return trim($name);
+            }, $categoryNames);
+            $goodCategories = [
+                "Sir Thomas Brisbane Planetarium",
+                "Festivals",
+                "LIVE",
+                "Music and concert",
+                "Brisbane Powerhouse",
+                "Riverstage",
+                "food and drink",
+                "Brisbane Markets",
+                "movies"
+            ];
+            $goodCategoryScore = 0;
+            foreach($goodCategories as $goodCategory) {
+                if (in_array($goodCategory, $categoryNames)) {
+                    $this->info('- ' . $goodCategory . ' 10');
+                    $goodCategoryScore = 20;
+                }
+            }
+            $score += $goodCategoryScore;
+
+            if(strpos($activity->description, ' eat ') !== false ||
+                strpos($activity->description, ' food ') !== false
+            ) {
+                $this->info('- Food 10');
+                $score += 10;
+            }
+            $this->info('total ' . $score);
             return $score;
         });
-
         $activities = $activities->values()->take(10);
 
-
         $feature = Feature::where('date', $day)->first();
-        if(!$feature) {
+        if (!$feature) {
             $feature = Feature::firstOrCreate([
                 "date" => $day
             ]);
         }
         $feature->activities()->delete();
-        $feature->activities()->saveMany($activities);
+        foreach($activities as $index => $activity) {
+            $this->info("$index {$activity->title}");
+            $feature->activities()->save($activity);
+        }
+
     }
 
     private function goGroupon($grouponCategory)
@@ -224,11 +282,11 @@ class LoadActivities extends Command
         ]);
         $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20&filters=category:$grouponCategory";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
-        if(!isset($groupon->deals)) {
+        if (!isset($groupon->deals)) {
             Log::info('no deails found');
             return;
         }
-        $activityIds = array_map(function($deal) {
+        $activityIds = array_map(function ($deal) {
             $activity = Activity::firstOrCreate(['title' => $deal->newsletterTitle]);
             $activity->fill([
                 "description" => $deal->highlightsHtml,
@@ -262,7 +320,7 @@ class LoadActivities extends Command
             "name" => "movies"
         ]);
 
-        $activityIds = array_map(function($movie) use ($category) {
+        $activityIds = array_map(function ($movie) use ($category) {
             $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
             $activity = Activity::firstOrCreate(['title' => "Watch " . $movie->title . " at the Cinemas"]);
             $activity->fill([

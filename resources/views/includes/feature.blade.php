@@ -14,6 +14,11 @@
                             {!! str_limit(strip_tags($activity->description), 150, '...') !!}
                         </p>
                         <ul>
+                            @foreach($activity->categories as $category)
+                                <li>{{ $category->name }}</li>
+                            @endforeach
+                        </ul>
+                        <ul>
                             @if(!$activity->timetables->count())
                             <li>
                                 No more sessions.
