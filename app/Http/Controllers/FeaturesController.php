@@ -13,9 +13,12 @@ class FeaturesController extends Controller
 {
     public function index()
     {
-        $features = Feature::orderBy('date', 'desc')->with(['activities.timetables' => function ($q) {
-            $q->where('end_time', '>=', Carbon::now());
-        }])->get();
+        $features = Feature::orderBy('date', 'desc')->get();
+        foreach($features as $feature) {
+            $feature->load(['activities.timetables' => function ($q) use ($feature) {
+                $q->where('end_time', '>=', $feature->date);
+            }]);
+        }
         return view('features.index', compact('features'));
     }
 }
