@@ -49,11 +49,11 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-        Activity::truncate();
-        DB::table('activity_category')->truncate();
-        Timetable::truncate();
-        Feature::truncate();
-        DB::table('activity_feature')->truncate();
+//        Activity::truncate();
+//        DB::table('activity_category')->truncate();
+//        Timetable::truncate();
+//        Feature::truncate();
+//        DB::table('activity_feature')->truncate();
 
         $this->loadMovies();
         $grouponCategories = [
