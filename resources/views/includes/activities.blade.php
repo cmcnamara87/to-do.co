@@ -39,9 +39,11 @@
                                 {{ $firstTimetable->end_time->format('h:i A') }}
                             @endif
                         </li>
+                        @if($activity->timetables->count() > 1)
                         <li class="list-group-item">
                             + {{ $activity->timetables->count() - 1 }} more times
                         </li>
+                        @endif
                     </ul>
                 </div>
             </div>
