@@ -49,7 +49,13 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-//        $this->loadMovies();
+        Activity::truncate();
+        DB::table('activity_category')->truncate();
+        Timetable::truncate();
+        Feature::truncate();
+        DB::table('activity_feature')->truncate();
+
+        $this->loadMovies();
         $grouponCategories = [
 //            "automotive",
 //            "auto-and-home-improvement",
@@ -64,9 +70,9 @@ class LoadActivities extends Command
 //            "electronics-goods",
 //            "cruise-travel",
 //            "home-improvement",
-            "entertainment-and-media",
+//            "entertainment-and-media", // its crappy self help books
 //            "hotels",
-            "local-services",
+//            "local-services", // its toilet repair
 //            "food-and-drink-goods",
 //            "resort-travel",
             "shopping",
@@ -82,7 +88,7 @@ class LoadActivities extends Command
 // 	        "women"
         ];
         foreach ($grouponCategories as $grouponCategory) {
-//            $this->goGroupon($grouponCategory);
+            $this->goGroupon($grouponCategory);
         }
 
         $eventUrls = [
@@ -121,11 +127,11 @@ class LoadActivities extends Command
         ];
 
         foreach ($eventUrls as $categoryName => $url) {
-//            $this->info($categoryName);
-//            $this->go($categoryName, $url);
+            $this->info($categoryName);
+            $this->go($categoryName, $url);
         }
 
-        $this->createFeaturedForDay(Carbon::today());
+//        $this->createFeaturedForDay(Carbon::today());
     }
 
 
