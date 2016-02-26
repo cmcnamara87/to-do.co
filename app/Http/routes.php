@@ -46,10 +46,13 @@ Route::get('sitemap', function(){
     return $sitemap->render('xml');
 });
 
-Route::get('/', 'FeaturesController@index');
+Route::get('/', 'ActivitiesController@brisbaneTodayCool');
 Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
 Route::resource('activities', 'ActivitiesController');
 Route::resource('features', 'FeaturesController');
+
+Route::get('/brisbane/today/cool', 'ActivitiesController@brisbaneTodayCool');
+Route::get('/brisbane/today/soon', 'ActivitiesController@brisbaneTodaySoon');
 
 Route::get('/categories/{categories}', 'CategoriesController@show');
 Route::get('/categories', 'CategoriesController@index');

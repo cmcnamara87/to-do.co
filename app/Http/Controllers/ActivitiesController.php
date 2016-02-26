@@ -15,9 +15,85 @@ use Illuminate\Support\Facades\Log;
 
 class ActivitiesController extends Controller
 {
-    public function index() {
+    public function brisbaneTodaySoon()
+    {
+        // get activities
+        $now = Carbon::now();
+        $activities = Activity::whereHas('timetables', function ($query) use ($now) {
+            $endOfDay = $now->copy()->endOfDay();
+            $query->where('end_time', '>=', $now); // not over yet
+            $query->where('start_time', '<=', $endOfDay); // but it starts before today is ova
+        })
+            ->get()
+            ->sortBy(function ($activity, $key) use ($now) {
+                $nextTimetable = $activity->timetables[0];
+                return $now->diffInMinutes($nextTimetable->start_time);
+            });
+        return view('activities.index', compact('activities'));
+    }
+
+    public function brisbaneTodayCool() {
+        // get activities
+        $now = Carbon::now();
+        $activities = Activity::whereHas('timetables', function ($query) use ($now) {
+            $endOfDay = $now->copy()->endOfDay();
+            $query->where('end_time', '>=', $now); // not over yet
+            $query->where('start_time', '<=', $endOfDay); // but it starts before today is ova
+        })
+            ->get()
+            ->sortByDesc(function ($activity, $key) use ($now) {
+                $nextTimetable = $activity->timetables[0];
+                $end = $now->copy()->endOfDay();
+                $score = 0;
+
+                // is it only on today, big bump
+                // how many days is it on?
+                $daysOn = array_reduce($activity->timetables->all(), function($carry, $timetable) {
+                    $carry += max($timetable->start_time->diffInDays($timetable->end_time), 1);
+                    return $carry;
+                }, 0);
+                // 30 for 1 day, 20 for 2 days, 10 for 3 days, 0 for any more days
+                $score += max(0, (30 - (10 * ($daysOn - 1))));
+
+                // is it in good categories
+                $categoryNames = $activity->categories->lists('name')->all();
+                // remove spaces!
+                $categoryNames = array_map(function($name) {
+                    return trim($name);
+                }, $categoryNames);
+                $goodCategories = [
+                    "Sir Thomas Brisbane Planetarium",
+                    "Festivals",
+                    "LIVE",
+                    "Music and concert",
+                    "Brisbane Powerhouse",
+                    "Riverstage",
+                    "food and drink",
+                    "Brisbane Markets",
+                    "movies"
+                ];
+                $goodCategoryScore = 0;
+                foreach($goodCategories as $goodCategory) {
+                    if (in_array($goodCategory, $categoryNames)) {
+                        $score += 10;
+                    }
+                }
+                $score += $goodCategoryScore;
+
+                if(strpos($activity->description, ' eat ') !== false ||
+                    strpos($activity->description, ' food ') !== false
+                ) {
+                    $score += 10;
+                }
+                return $score;
+            });
+        return view('activities.index', compact('activities'));
+    }
+
+    public function index()
+    {
         $day = Carbon::now();
-        $activities = Activity::whereHas('timetables', function($query) use ($day) {
+        $activities = Activity::whereHas('timetables', function ($query) use ($day) {
             $query->where('end_time', '>=', $day);
         })->with(['timetables' => function ($q) {
             $q->where('end_time', '>=', Carbon::now());
@@ -53,7 +129,7 @@ class ActivitiesController extends Controller
             // is it in good categories
             $categoryNames = $activity->categories->lists('name')->all();
             // remove spaces!
-            $categoryNames = array_map(function($name) {
+            $categoryNames = array_map(function ($name) {
                 return trim($name);
             }, $categoryNames);
             $goodCategories = [
@@ -68,7 +144,7 @@ class ActivitiesController extends Controller
                 "movies"
             ];
             $goodCategoryScore = 0;
-            foreach($goodCategories as $goodCategory) {
+            foreach ($goodCategories as $goodCategory) {
                 if (in_array($goodCategory, $categoryNames)) {
 //                    $this->info('- ' . $goodCategory . ' 10');
                     $goodCategoryScore += 20;
@@ -76,7 +152,7 @@ class ActivitiesController extends Controller
             }
             $score += $goodCategoryScore;
 
-            if(strpos($activity->description, ' eat ') !== false ||
+            if (strpos($activity->description, ' eat ') !== false ||
                 strpos($activity->description, ' food ') !== false
             ) {
 //                $this->info('- Food 10');
@@ -90,7 +166,8 @@ class ActivitiesController extends Controller
         return view('activities.index', compact('activities'));
     }
 
-    public function show($activity) {
+    public function show($activity)
+    {
         return view('activities.show', compact('activity'));
     }
 }

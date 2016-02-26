@@ -4,6 +4,9 @@
             <div class="col-sm-3">
                 <div class="panel panel-default">
                     <div>
+                        @if(isset($activity->score))
+                            <strong>{{ $activity->score }}</strong>
+                        @endif
                         <a href="{{ url("{$activity->slug}") }}">
                             <img src="{{ asset($activity->image_url) }}" alt="{{ $activity->title }}" style="width:100%;"/>
                         </a>

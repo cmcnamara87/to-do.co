@@ -11,6 +11,10 @@
     </div>
     <div class="container">
         <h2>Activities</h2>
+        <ul>
+            <li><a href="{{ url("brisbane/today/cool") }}">Coolest</a></li>
+            <li><a href="{{ url("brisbane/today/soon") }}">Soonest</a></li>
+        </ul>
         @include('includes.activities', ["activities" => $activities])
     </div>
 @stop
