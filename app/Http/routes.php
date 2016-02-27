@@ -51,8 +51,16 @@ Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
 Route::resource('activities', 'ActivitiesController');
 Route::resource('features', 'FeaturesController');
 
-Route::get('/brisbane/today/cool', 'ActivitiesController@brisbaneTodayCool');
-Route::get('/brisbane/today/soon', 'ActivitiesController@brisbaneTodaySoon');
+Route::get('/brisbane/{when}/{sort}', 'ActivitiesController@brisbane');
+//Route::get('/brisbane/this-weekend/soon', 'ActivitiesController@brisbaneThisWeekendSoon');
+//Route::get('/brisbane/this-weekend/cool', 'ActivitiesController@brisbaneThisWeekendCool');
+//
+//Route::get('/brisbane/today/cool', 'ActivitiesController@brisbaneTodayCool');
+//Route::get('/brisbane/today/soon', 'ActivitiesController@brisbaneTodaySoon');
+//
+//Route::get('/brisbane/tomorrow/cool', 'ActivitiesController@brisbaneTomorrowCool');
+//Route::get('/brisbane/tomorrow/soon', 'ActivitiesController@brisbaneTomorrowSoon');
+
 
 Route::get('/categories/{categories}', 'CategoriesController@show');
 Route::get('/categories', 'CategoriesController@index');
