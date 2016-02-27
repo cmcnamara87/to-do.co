@@ -92,6 +92,7 @@ class LoadActivities extends Command
         }
 
         $eventUrls = [
+            "Classes and workshops" => "http://www.trumba.com/calendars/type.rss?filterview=classses",
             "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Business events" => "http://www.trumba.com/calendars/BiB.rss",
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
@@ -107,7 +108,6 @@ class LoadActivities extends Command
             "Sir Thomas Brisbane Planetarium events" => "http://www.trumba.com/calendars/planetarium.rss",
             "Riverstage events" => "http://www.trumba.com/calendars/brisbane-riverstage.rss",
             "Museum of Brisbane events" => "http://www.trumba.com/calendars/mob.rss",
-            "LIVE events" => "http://www.trumba.com/calendars/LIVE.rss",
             // "King George Square events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Kids aged 6 to 12 events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=kids_6_12",
             "Infants and toddlers events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=infants_toddlers",
@@ -120,9 +120,9 @@ class LoadActivities extends Command
             "Brisbane Powerhouse events" => "http://www.trumba.com/calendars/brisbane-powerhouse.rss",
             "Brisbane Parks events" => "http://www.trumba.com/calendars/brisbane-events-rss.rss?filterview=parks",
             "Brisbane City Council events" => "http://www.trumba.com/calendars/brisbane-city-council.rss",
-            "Classes and workshops" => "http://www.trumba.com/calendars/type.rss?filterview=classses",
             "City Hall events" => "http://www.trumba.com/calendars/city-hall.rss?filterview=city-hall&filter4=_266279_&filterfield4=22542",
-            "Active parks events" => "http://www.trumba.com/calendars/active-parks.rss"
+            "Active parks events" => "http://www.trumba.com/calendars/active-parks.rss",
+            "LIVE events" => "http://www.trumba.com/calendars/LIVE.rss"
 
         ];
 
@@ -130,8 +130,6 @@ class LoadActivities extends Command
             $this->info($categoryName);
             $this->go($categoryName, $url);
         }
-
-//        $this->createFeaturedForDay(Carbon::today());
     }
 
 
@@ -164,15 +162,14 @@ class LoadActivities extends Command
             $description = (string)$xcal->description;
             $this->info($trumba->weblink);
 
-            $activity = Activity::where('title', $title)->first();
-            if (!$activity) {
-                $activity = Activity::create([
-                    "title" => $title,
-                    "description" => $description,
-                    "weblink" => (string)$item->link,
-                    "image_url" => $image_url
-                ]);
-            }
+            $activity = Activity::firstOrCreate(['title' => $title]);
+            $activity->fill([
+                "description" => $description,
+                "weblink" => (string)$item->link,
+                "image_url" => $image_url
+            ]);
+            $activity->save();
+
             $activityIds[] = $activity->id;
 
             $timezone = 'Australia/Brisbane';
@@ -188,97 +185,6 @@ class LoadActivities extends Command
             // save it
         }
         $category->activities()->sync($activityIds, false);
-    }
-
-    function createFeaturedForDay(Carbon $day)
-    {
-        Feature::truncate();
-        DB::table('activity_feature')->truncate();
-
-        $previousFeaturedActivityIds = []; //DB::table('activity_feature')->lists('activity_id');
-        $activities = Activity::whereHas('timetables', function ($query) use ($day, $previousFeaturedActivityIds) {
-            $end = $day->copy()->endOfDay();
-            $query->where('start_time', '<=', $end);
-            $query->where('end_time', '>=', $day);
-            $query->whereNotIn('activity_id', $previousFeaturedActivityIds);
-        })->get();
-
-        // sort them by some magical formula (its the number of days)
-        $activities = $activities->sortByDesc(function ($activity, $key) use ($day) {
-
-            $this->info($activity->title);
-
-
-            $nextTimetable = $activity->timetables[0];
-            $end = $day->copy()->endOfDay();
-            $score = 0;
-            // is it on today?
-            if ($nextTimetable->start_time->lte($end) && $nextTimetable->end_time->gte($day)) {
-                $this->info('- Today 10');
-                $score += 10;
-            }
-            // is it only on today, big bump
-            // is it only on today, big bump
-            $this->info(' - Count ' . json_encode($activity->timetables));
-            $this->info(' - Count ' . json_encode($activity->categories));
-            if ($activity->timetables->count() == 1 &&
-                $nextTimetable->start_time->diffInHours($nextTimetable->end_time) <= 24
-            ) {
-                $this->info('- Only Today 10');
-                $score += 20;
-                // is it starting soon
-//                $nextTimetable->start_time->diffInHours(Carbon::)
-            }
-
-            // is it in good categories
-            $categoryNames = $activity->categories->lists('name')->all();
-            // remove spaces!
-            $categoryNames = array_map(function($name) {
-                return trim($name);
-            }, $categoryNames);
-            $goodCategories = [
-                "Sir Thomas Brisbane Planetarium",
-                "Festivals",
-                "LIVE",
-                "Music and concert",
-                "Brisbane Powerhouse",
-                "Riverstage",
-                "food and drink",
-                "Brisbane Markets",
-                "movies"
-            ];
-            $goodCategoryScore = 0;
-            foreach($goodCategories as $goodCategory) {
-                if (in_array($goodCategory, $categoryNames)) {
-                    $this->info('- ' . $goodCategory . ' 10');
-                    $goodCategoryScore = 20;
-                }
-            }
-            $score += $goodCategoryScore;
-
-            if(strpos($activity->description, ' eat ') !== false ||
-                strpos($activity->description, ' food ') !== false
-            ) {
-                $this->info('- Food 10');
-                $score += 10;
-            }
-            $this->info('total ' . $score);
-            return $score;
-        });
-        $activities = $activities->values()->take(10);
-
-        $feature = Feature::where('date', $day)->first();
-        if (!$feature) {
-            $feature = Feature::firstOrCreate([
-                "date" => $day
-            ]);
-        }
-        $feature->activities()->delete();
-        foreach($activities as $index => $activity) {
-            $this->info("$index {$activity->title}");
-            $feature->activities()->save($activity);
-        }
-
     }
 
     private function goGroupon($grouponCategory)

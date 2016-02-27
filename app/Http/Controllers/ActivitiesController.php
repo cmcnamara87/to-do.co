@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Category;
 use App\Feature;
 use App\Timetable;
 use Carbon\Carbon;
@@ -27,7 +28,9 @@ class ActivitiesController extends Controller
             $end = Carbon::today()->endOfDay();
         }
         $activities = $this->getActivities($start, $end, $sort);
-        return view('activities.index', compact('activities', 'sort', 'when'));
+        // get the categories
+        $categories = Category::all();
+        return view('activities.index', compact('activities', 'sort', 'when', 'categories'));
     }
     public function brisbaneThisWeekendSoon() {
         return $this->brisbane('this-weekend', 'soon');
@@ -100,7 +103,9 @@ class ActivitiesController extends Controller
         $activities = Activity::whereHas('timetables', function ($query) use ($start, $end) {
             $query->where('end_time', '>=', $start); // not over yet
             $query->where('start_time', '<=', $end); // but it starts before today is ova
-        })->get();
+        })->with(['categories', 'timetables' => function ($q) use ($start) {
+            $q->where('end_time', '>=', $start);
+        }])->get();
         return $this->$sort($activities);
     }
 
