@@ -85,7 +85,7 @@ class ActivitiesController extends Controller
             $goodCategoryScore = 0;
             foreach($goodCategories as $goodCategory) {
                 if (in_array($goodCategory, $categoryNames)) {
-                    $score += 10;
+                    $score += 15;
                 }
             }
             $score += $goodCategoryScore;
@@ -192,8 +192,8 @@ class ActivitiesController extends Controller
         return view('activities.index', compact('activities'));
     }
 
-    public function show($activity)
+    public function show($activity, $when)
     {
-        return view('activities.show', compact('activity'));
+        return view('activities.show', compact('activity', 'when'));
     }
 }

@@ -65,7 +65,7 @@ Route::get('/brisbane/{when}/{sort}', 'ActivitiesController@brisbane');
 Route::get('/categories/{categories}', 'CategoriesController@show');
 Route::get('/categories', 'CategoriesController@index');
 
-Route::get('/{activities}', 'ActivitiesController@show');
+Route::get('/{activities}/{when}', 'ActivitiesController@show');
 /*
 |--------------------------------------------------------------------------
 | Application Routes
