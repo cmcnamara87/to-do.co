@@ -24,8 +24,8 @@ class ActivitiesController extends Controller
             $start = Carbon::tomorrow();
             $end = Carbon::tomorrow()->endOfDay();
         } else {
-            $start = Carbon::today();
-            $end = Carbon::today()->endOfDay();
+            $start = Carbon::now();
+            $end = Carbon::now()->endOfDay();
         }
         $activities = $this->getActivities($start, $end, $sort);
         // get the categories
