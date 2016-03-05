@@ -199,7 +199,8 @@ class LoadActivities extends Command
         $category = Category::firstOrCreate([
             "name" => str_replace('-', ' ', $grouponCategory)
         ]);
-        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_200012_212556_0&division_id=brisbane&offset=0&limit=20&filters=category:$grouponCategory";
+
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_" . env('GPN_AFFILIATE_ID') . "_212556_0&division_id=brisbane&offset=0&limit=20&filters=category:$grouponCategory";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
         if (!isset($groupon->deals)) {
             Log::info('no deails found');
