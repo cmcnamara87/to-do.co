@@ -149,7 +149,9 @@ class LoadActivities extends Command
             // namespaces
             $namespaces = $item->getNameSpaces(true);
             $trumba = $item->children($namespaces['x-trumba']);
-            $xcal = $item->children($namespaces['xCal']);
+            if(isset($namespaces['xCal'])) {
+                $xcal = $item->children($namespaces['xCal']);
+            }
 
             $image_url = '';
             foreach ($trumba->customfield as $customField) {
@@ -159,7 +161,12 @@ class LoadActivities extends Command
             }
 
             $title = (string)$item->title;
-            $description = (string)$xcal->description;
+            if(isset($xcal)) {
+                $description = (string)$xcal->description;
+            } else {
+                $description = '';
+            }
+
             $this->info($trumba->weblink);
 
             $activity = Activity::firstOrCreate(['title' => $title]);
