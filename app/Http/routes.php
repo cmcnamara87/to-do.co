@@ -91,7 +91,7 @@ Route::get('/brisbane/{categories}/{when}/{sort}', 'CategoriesController@show');
 Route::get('/categories/{categories}', 'CategoriesController@show');
 Route::get('/categories', 'CategoriesController@index');
 
-Route::get('/{activities}/{when}', 'ActivitiesController@show');
+Route::get('/{activities}/{when?}', 'ActivitiesController@show');
 
 // Jaaxy Routes
 // fun things to do in brisbane	75	13	108		92	Search

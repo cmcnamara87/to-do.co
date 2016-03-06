@@ -195,7 +195,7 @@ class ActivitiesController extends Controller
         return view('activities.index', compact('activities'));
     }
 
-    public function show($activity, $when)
+    public function show($activity, $when = 'today')
     {
         return view('activities.show', compact('activity', 'when'));
     }
