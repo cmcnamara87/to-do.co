@@ -288,7 +288,9 @@ class LoadActivities extends Command
             $activity->fill([
                 "description" => $movie->synopsis,
                 "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
-                "image_url" => "http://moviesowl.com/{$movie->wide_poster}"
+                "image_url" => "http://moviesowl.com/{$movie->wide_poster}",
+                "price" => -1,
+                "value" => -1
             ]);
             $activity->save();
 
@@ -296,9 +298,7 @@ class LoadActivities extends Command
             $timetable = Timetable::firstOrCreate([
                 "activity_id" => $activity->id,
                 "start_time" => Carbon::today(),
-                "end_time" => Carbon::parse("next thursday"),
-                "price" => -1,
-                "value" => -1
+                "end_time" => Carbon::parse("next thursday")
             ]);
             Log::info('Adding tag ' . $category->name . ' for ' . $activity->title);
             // save it
