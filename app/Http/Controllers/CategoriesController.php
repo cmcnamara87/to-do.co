@@ -32,9 +32,7 @@ class CategoriesController extends Controller
             "Riverstage",
             "Brisbane Markets"
         ];
-
-
-
+        
         $featured = Activity::when($start, $end)->whereHas('categories', function ($query) use ($categoryNames) {
             $query->whereIn('name', $categoryNames);
         })->take($display)->get();
