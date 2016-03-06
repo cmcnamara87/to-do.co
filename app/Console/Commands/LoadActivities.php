@@ -215,6 +215,18 @@ class LoadActivities extends Command
                 "value" => $value
             ]);
             $activity->save();
+            if($price == 0) {
+                $category = Category::firstOrCreate([
+                    "name" => "Free"
+                ]);
+                $category->activities()->sync([$activity->id], false);
+            } else if ($price > 0 && $price <= 20) {
+                $category = Category::firstOrCreate([
+                    "name" => "Cheap"
+                ]);
+                $category->activities()->sync([$activity->id], false);
+            }
+
 
             $activityIds[] = $activity->id;
 
@@ -248,14 +260,22 @@ class LoadActivities extends Command
         $activityIds = array_map(function ($deal) {
             $activity = Activity::firstOrCreate(['title' => $deal->newsletterTitle]);
 
+            $price = $deal->priceSummary->price->amount / 100.0;
+            $value = $deal->priceSummary->value->amount / 100.0;
             $activity->fill([
                 "description" => $deal->highlightsHtml,
                 "weblink" => $deal->dealUrl,
                 "image_url" => $deal->largeImageUrl,
-                "price" => $deal->priceSummary->price->amount / 100.0,
-                "value" => $deal->priceSummary->value->amount / 100.0
+                "price" => $price,
+                "value" => $value
             ]);
             $activity->save();
+            if ($price > 0 && $price <= 20) {
+                $category = Category::firstOrCreate([
+                    "name" => "Cheap"
+                ]);
+                $category->activities()->sync([$activity->id], false);
+            }
 
             $this->info('created activity ' . $activity->title . ' ' . $activity->price);
 

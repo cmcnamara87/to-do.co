@@ -30,11 +30,11 @@
                 <div style="margin-top:10px;">@include('includes.activities', ["activities" => $movies])</div>
 
                 <h2>Free</h2>
-                <a href="{{ url("categories/movies") }}">See More</a>
+                <a href="{{ url("categories/free") }}">See More</a>
                 <div style="margin-top:10px;">@include('includes.activities', ["activities" => $free])</div>
 
                 <h2>Cheap</h2>
-                <a href="{{ url("categories/movies") }}">See More</a>
+                <a href="{{ url("categories/cheap") }}">See More</a>
                 <div style="margin-top:10px;">@include('includes.activities', ["activities" => $cheap])</div>
             </div>
         </div>
