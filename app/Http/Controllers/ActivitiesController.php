@@ -33,7 +33,7 @@ class ActivitiesController extends Controller
         $activities = $this->getActivities($start, $end, $sort);
         // get the categories
         $categories = Category::all();
-        return view('activities.index', compact('activities', 'sort', 'when', 'categories'));
+        return view('activities.list', compact('activities', 'sort', 'when', 'categories'));
     }
     public function brisbaneThisWeekendSoon() {
         return $this->brisbane('this-weekend', 'soon');

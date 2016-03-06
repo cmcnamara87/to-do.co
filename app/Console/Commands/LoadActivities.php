@@ -55,7 +55,7 @@ class LoadActivities extends Command
 //        Feature::truncate();
 //        DB::table('activity_feature')->truncate();
 
-        $this->loadMovies();
+
         $grouponCategories = [
 //            "automotive",
 //            "auto-and-home-improvement",
@@ -128,12 +128,14 @@ class LoadActivities extends Command
 
         foreach ($eventUrls as $categoryName => $url) {
             $this->info($categoryName);
-            $this->go($categoryName, $url);
+            $this->loadBcc($categoryName, $url);
         }
+
+        $this->loadMovies();
     }
 
 
-    function go($categoryName, $url)
+    function loadBcc($categoryName, $url)
     {
         $category = Category::firstOrCreate([
             "name" => trim(str_replace("events", "", $categoryName))
@@ -154,11 +156,35 @@ class LoadActivities extends Command
             }
 
             $image_url = '';
+            $price = -1;
+            $value = -1;
             foreach ($trumba->customfield as $customField) {
                 if ($customField->attributes()->name == "Event image") {
                     $image_url = (string)$customField;
                 }
+                // time to work out the price
+//            <x-trumba:customfield name="Cost" id="22177" type="text">Free</x-trumba:customfield>
+                if ($customField->attributes()->name == "Cost") {
+                    $priceString = (string)$customField;
+                    $this->info($priceString);
+                    if($priceString == "Free") {
+                        $price = 0;
+                        $value = 0;
+                    }
+                }
+//
+//                    } else {
+//                        $matches = [];
+//
+//                        if(count($matches)) {
+//                            dd($matches);
+//                        }
+//                    }
+//
+//                }
             }
+
+
 
             $title = (string)$item->title;
             if(isset($xcal)) {
@@ -169,11 +195,24 @@ class LoadActivities extends Command
 
             $this->info($trumba->weblink);
 
+            // get the price
+            $matches = [];
+
+            if($price < 0) {
+                preg_match ( '/\$(\d+\.\d+)/', (string)$item->description, $matches );
+                if(count($matches)) {
+                    $price = $matches[1];
+                    $value = $matches[1];
+                }
+            }
+
             $activity = Activity::firstOrCreate(['title' => $title]);
             $activity->fill([
                 "description" => $description,
                 "weblink" => (string)$item->link,
-                "image_url" => $image_url
+                "image_url" => $image_url,
+                "price" => $price,
+                "value" => $value
             ]);
             $activity->save();
 
@@ -208,14 +247,17 @@ class LoadActivities extends Command
         }
         $activityIds = array_map(function ($deal) {
             $activity = Activity::firstOrCreate(['title' => $deal->newsletterTitle]);
+
             $activity->fill([
                 "description" => $deal->highlightsHtml,
                 "weblink" => $deal->dealUrl,
-                "image_url" => $deal->largeImageUrl
+                "image_url" => $deal->largeImageUrl,
+                "price" => $deal->priceSummary->price->amount / 100.0,
+                "value" => $deal->priceSummary->value->amount / 100.0
             ]);
             $activity->save();
 
-            $this->info('created activity ' . $activity->title);
+            $this->info('created activity ' . $activity->title . ' ' . $activity->price);
 
             $start = Carbon::parse($deal->startAt);
             $end = Carbon::parse($deal->endAt);
@@ -254,7 +296,9 @@ class LoadActivities extends Command
             $timetable = Timetable::firstOrCreate([
                 "activity_id" => $activity->id,
                 "start_time" => Carbon::today(),
-                "end_time" => Carbon::parse("next thursday")
+                "end_time" => Carbon::parse("next thursday"),
+                "price" => -1,
+                "value" => -1
             ]);
             Log::info('Adding tag ' . $category->name . ' for ' . $activity->title);
             // save it

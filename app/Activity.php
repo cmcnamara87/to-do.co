@@ -17,7 +17,14 @@ class Activity extends Model implements SluggableInterface
     ];
 
 
-    protected $fillable = ['title', 'description', 'image_url', 'weblink'];
+    protected $fillable = [
+        'title',
+        'description',
+        'image_url',
+        'weblink',
+        'price',
+        'value'
+    ];
 
     /**
      * Get the timetables for the blog post.

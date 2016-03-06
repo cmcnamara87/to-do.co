@@ -18,7 +18,7 @@ class CategoriesController extends Controller
         $end = Carbon::now()->endOfDay();
         $display = 8;
 
-        $soon = Activity::when($start, $end)->get()->sortBy(function ($activity) {
+        $soon = Activity::when($start, Carbon::tomorrow()->endOfDay())->get()->sortBy(function ($activity) {
             $nextTimetable = $activity->timetables[0];
             return Carbon::now()->diffInMinutes($nextTimetable->start_time);
         })->take($display);
@@ -32,7 +32,7 @@ class CategoriesController extends Controller
             "Riverstage",
             "Brisbane Markets"
         ];
-        
+
         $featured = Activity::when($start, $end)->whereHas('categories', function ($query) use ($categoryNames) {
             $query->whereIn('name', $categoryNames);
         })->take($display)->get();

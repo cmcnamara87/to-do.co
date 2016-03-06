@@ -13,6 +13,16 @@
                     </div>
                     <div class="panel-body">
                         <h3><a href="{{ url("{$activity->slug}") }}">{{ $activity->title }}</a></h3>
+                        <h4>
+                            @if($activity->price == 0)
+                                Free
+                            @elseif($activity->price > 0)
+                                ${{ $activity->price }}
+                                @if($activity->price != $activity->value)
+                                was ${{ $activity->value }}
+                                @endif
+                            @endif
+                        </h4>
                     </div>
                 </div>
             </div>
