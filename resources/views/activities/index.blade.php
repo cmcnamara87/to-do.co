@@ -10,23 +10,23 @@
         </div>
     </div>
     <div class="container">
-        <div class="btn-group" role="group" aria-label="...">
-            <a class="btn btn-default {{ $sort == 'cool' ? 'active' : '' }}" href="{{ url("brisbane/{$when}/cool") }}">Coolest First</a>
-            <a class="btn btn-default {{ $sort == 'soon' ? 'active' : '' }}" href="{{ url("brisbane/{$when}/soon") }}">Soonest First</a>
-        </div>
 
         <div class="row">
             <div class="col-sm-12">
+                <h2>Featured</h2>
+                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $featured])</div>
 
-                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $activities])</div>
+                <h2>Soon</h2>
+                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $soon])</div>
+
+                <h2>Food</h2>
+                <a href="{{ url("categories/food-and-drink") }}">See More</a>
+                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $food])</div>
+
+                <h2>Movies</h2>
+                <a href="{{ url("categories/movies") }}">See More</a>
+                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $movies])</div>
             </div>
-            {{--<div class="col-sm-3">--}}
-                {{--<ul class="nav nav-pills nav-stacked">--}}
-                    {{--@foreach($categories as $category)--}}
-                        {{--<li class="text-capitalize"><a>{{ $category->name }}</a></li>--}}
-                    {{--@endforeach--}}
-                {{--</ul>--}}
-            {{--</div>--}}
         </div>
     </div>
 @stop

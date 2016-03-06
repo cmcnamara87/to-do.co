@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\SluggableInterface;
 use Cviebrock\EloquentSluggable\SluggableTrait;
 use Illuminate\Database\Eloquent\Model;
@@ -34,4 +35,20 @@ class Activity extends Model implements SluggableInterface
     {
         return $this->belongsToMany(Category::class);
     }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhen($query, Carbon $start, Carbon $end)
+    {
+        return $query->whereHas('timetables', function ($query) use ($start, $end) {
+            $query->where('end_time', '>=', $start); // not over yet
+            $query->where('start_time', '<=', $end); // but it starts before today is ova
+        })->with(['categories', 'timetables' => function ($q) use ($start) {
+            $q->where('end_time', '>=', $start);
+        }]);
+    }
+
 }

@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\Log;
 
 class ActivitiesController extends Controller
 {
+    public function grouped() {
+
+    }
     public function brisbane($when, $sort) {
         if($when == 'this-weekend') {
             $start = Carbon::parse('Saturday');
