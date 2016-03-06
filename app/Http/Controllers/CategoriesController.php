@@ -16,16 +16,12 @@ class CategoriesController extends Controller
     {
         $start = Carbon::now();
         $end = Carbon::now()->endOfDay();
-
-
-        $movies = Activity::when($start, $end)->whereHas('categories', function ($query) {
-            $query->where('name', '=', 'movies');
-        })->get();
+        $display = 8;
 
         $soon = Activity::when($start, $end)->get()->sortBy(function ($activity) {
             $nextTimetable = $activity->timetables[0];
             return Carbon::now()->diffInMinutes($nextTimetable->start_time);
-        })->take(4);
+        })->take($display);
 
         $categoryNames = [
             "Sir Thomas Brisbane Planetarium",
@@ -41,16 +37,16 @@ class CategoriesController extends Controller
 
         $featured = Activity::when($start, $end)->whereHas('categories', function ($query) use ($categoryNames) {
             $query->whereIn('name', $categoryNames);
-        })->take(4)->get();
+        })->take($display)->get();
 
 
         $food = Activity::when($start, $end)->whereHas('categories', function ($query) use ($categoryNames) {
             $query->where('name', 'food and drink');
-        })->take(4)->get();
+        })->take($display)->get();
 
         $movies = Activity::when($start, $end)->whereHas('categories', function ($query) use ($categoryNames) {
             $query->where('name', '=', 'movies');
-        })->take(4)->get();
+        })->take($display)->get();
 
         $cheap = [];
         $free = [];
