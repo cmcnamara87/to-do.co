@@ -23,11 +23,11 @@
                                 @endif
                             @endif
                         </h4>
-                        <ul>
-                            @foreach($activity->categories as $category)
-                                <li>{{ $category->name }}</li>
-                            @endforeach
-                        </ul>
+                        {{--<ul>--}}
+                            {{--@foreach($activity->categories as $category)--}}
+                                {{--<li>{{ $category->name }}</li>--}}
+                            {{--@endforeach--}}
+                        {{--</ul>--}}
 
                     </div>
                 </div>
