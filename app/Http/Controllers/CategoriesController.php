@@ -46,9 +46,10 @@ class CategoriesController extends Controller
             $query->where('name', '=', 'movies');
         })->take($display)->get();
 
-        $cheap = [];
-        $free = [];
-        return view('activities.index', compact('soon', 'featured', 'food', 'movies'));
+        $free = Activity::when($start, $end)->where('price', 0)->take($display)->get();
+        $cheap = Activity::when($start, $end)->where('price', '>', 0)->where('price', '<=', 20)->take($display)->get();
+
+        return view('activities.index', compact('soon', 'featured', 'food', 'movies', 'free', 'cheap'));
     }
 
     public function show(Category $category) {
