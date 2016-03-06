@@ -49,11 +49,11 @@ class LoadActivities extends Command
     public function handle()
     {
         $this->info('Loading activites');
-//        Activity::truncate();
-//        DB::table('activity_category')->truncate();
-//        Timetable::truncate();
-//        Feature::truncate();
-//        DB::table('activity_feature')->truncate();
+        Activity::truncate();
+        DB::table('activity_category')->truncate();
+        Timetable::truncate();
+        Feature::truncate();
+        DB::table('activity_feature')->truncate();
 
 
         $grouponCategories = [
@@ -216,17 +216,19 @@ class LoadActivities extends Command
             ]);
             $activity->save();
             if($price == 0) {
-                $category = Category::firstOrCreate([
+                $freeCategory = Category::firstOrCreate([
                     "name" => "Free"
                 ]);
-                $category->activities()->sync([$activity->id], false);
-            } else if ($price > 0 && $price <= 20) {
-                $category = Category::firstOrCreate([
+                $this->info("is free");
+                $activity->categories()->sync([$freeCategory->id], false);
+            }
+            else if ($price > 0 && $price <= 20) {
+                $cheapCategory = Category::firstOrCreate([
                     "name" => "Cheap"
                 ]);
-                $category->activities()->sync([$activity->id], false);
+                $this->info("is cheap");
+                $activity->categories()->sync([$cheapCategory->id], false);
             }
-
 
             $activityIds[] = $activity->id;
 
@@ -271,10 +273,10 @@ class LoadActivities extends Command
             ]);
             $activity->save();
             if ($price > 0 && $price <= 20) {
-                $category = Category::firstOrCreate([
+                $cheapCategory = Category::firstOrCreate([
                     "name" => "Cheap"
                 ]);
-                $category->activities()->sync([$activity->id], false);
+                $cheapCategory->activities()->sync([$activity->id], false);
             }
 
             $this->info('created activity ' . $activity->title . ' ' . $activity->price);
