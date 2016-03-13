@@ -2,28 +2,34 @@
 @section('title', 'Things To Do in Brisbane | To-Do.Co')
 @section('description', 'Find Great Activities and Events from around Brisbane')
 @section('content')
-
-    <div class="jumbotron">
-        <div class="container">
-            <h1>Things To Do in Brisbane</h1>
-            <p>Find Great Activities and Events from around Brisbane</p>
-        </div>
-    </div>
+    <style>
+        h2 {
+            text-align: center;
+        font-weight: 900;
+            font-size: 50px;
+        }
+    </style>
+    {{--<div class="jumbotron">--}}
+        {{--<div class="container">--}}
+            {{--<h1>Things To Do in Brisbane</h1>--}}
+            {{--<p>Find Great Activities and Events from around Brisbane</p>--}}
+        {{--</div>--}}
+    {{--</div>--}}
     <div class="container">
 
         <div class="row">
             <div class="col-sm-12">
                 <h2>Featured</h2>
                 <a href="{{ url("brisbane/today/cool") }}">See More</a>
-                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $featured])</div>
+                <div style="margin-top:10px;margin-bottom: 30px;">@include('includes.activities', ["activities" => $featured])</div>
 
                 <h2>Soon</h2>
                 <a href="{{ url("brisbane/today/soon") }}">See More</a>
-                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $soon])</div>
+                <div style="margin-top:10px;margin-bottom: 30px;">@include('includes.activities', ["activities" => $soon])</div>
 
                 <h2>Food</h2>
                 <a href="{{ url("categories/food-and-drink") }}">See More</a>
-                <div style="margin-top:10px;">@include('includes.activities', ["activities" => $food])</div>
+                <div style="margin-top:10px;margin-bottom: 30px;>@include('includes.activities', ["activities" => $food])</div>
 
                 <h2>Movies</h2>
                 <a href="{{ url("categories/movies") }}">See More</a>
