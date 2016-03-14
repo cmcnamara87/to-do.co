@@ -7,6 +7,9 @@
 <meta name="description" content="@yield('description')">
 @endif
 
+
+<script type="application/ld+json">@yield('breadcrumb')</script>
+
 <!-- load bootstrap from a cdn -->
 {{--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">--}}
 

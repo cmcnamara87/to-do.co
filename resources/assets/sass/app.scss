@@ -1,8 +1,8 @@
 
 $navbar-default-bg: white;
-$jumbotron-bg: #85C996;//#204F84;//#FED000;
-$jumbotron-color: white;
-$brand-primary: #5E9C6D;
+$jumbotron-bg: #FFD500;//#204F84;//#FED000;
+$jumbotron-color: #463C09;
+//$brand-primary: #30CDD0;
 
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
@@ -15,9 +15,11 @@ body {
 .jumbotron {
   margin-top: -20px;
   text-align: center;
+  text-transform: uppercase;
   h1 {
-    font-weight: 100;
+    font-weight: 900;
   }
+
 }
 
 .panel {

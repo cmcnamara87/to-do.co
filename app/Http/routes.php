@@ -30,9 +30,16 @@ Route::get('sitemap', function(){
     if (!$sitemap->isCached())
     {
         // add item to the sitemap (url, date, priority, freq)
-        $sitemap->add(URL::to('/'), \Carbon\Carbon::today(), '1.0', 'daily');
-        $sitemap->add(URL::to('activities'), \Carbon\Carbon::today(), '0.9', 'daily');
+        $sitemap->add(URL::to('/'), \Carbon\Carbon::today(), '0.5', 'monthly');
 
+        $cities = \App\City::all();
+        $categories = \App\Category::all();
+        foreach($cities as $city) {
+            $sitemap->add(url("{$city->slug}"), \Carbon\Carbon::today(), 0.9, 'daily');
+            foreach($categories as $category) {
+                $sitemap->add(url("{$city->slug}/{$category->slug}"), \Carbon\Carbon::today(), 0.8, 'daily');
+            }
+        }
 
         // get all posts from db
         $activities = \App\Activity::orderBy('created_at', 'desc')->get();
@@ -46,7 +53,7 @@ Route::get('sitemap', function(){
                 'title' => $activity->title,
                 'caption' => $activity->description
             ]];
-            $sitemap->add(url("{$activity->slug}"), $activity->updated_at, 0.5, 'yearly', $images);
+            $sitemap->add(url("activities/{$activity->slug}"), $activity->updated_at, 0.5, 'yearly', $images);
         }
     }
     // show your sitemap (options: 'xml' (default), 'html', 'txt', 'ror-rss', 'ror-rdf')

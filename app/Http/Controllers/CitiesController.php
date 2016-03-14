@@ -24,6 +24,7 @@ class CitiesController extends Controller
     {
         $start = Carbon::now();
 
+
         $categories = Category::whereHas('activities', function ($q) use ($city) {
             $q->where('city_id', $city->id);
         })
