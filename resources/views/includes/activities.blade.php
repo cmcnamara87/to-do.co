@@ -15,6 +15,12 @@
                         <h5>
                             <a href="{{ url("activities/{$activity->slug}") }}">{{ $activity->title }}</a>
                         </h5>
+                        <ul class="list-unstyled">
+                            @foreach($activity->timetables as $timetable)
+                                <li class="text-muted">{{ $timetable->start_time->toDateTimeString() }}
+                                    - {{ $timetable->end_time->toDateTimeString() }}</li>
+                            @endforeach
+                        </ul>
                         <p class="text-muted">
                             @if($activity->price == 0)
                                 Free
@@ -25,11 +31,11 @@
                                 @endif
                             @endif
                         </p>
-                        {{--<ul>--}}
-                            {{--@foreach($activity->categories as $category)--}}
-                                {{--<li>{{ $category->name }}</li>--}}
-                            {{--@endforeach--}}
-                        {{--</ul>--}}
+                        <ul class="list-inline">
+                            @foreach($activity->categories as $category)
+                                <li><span class="label label-default">{{ $category->name }}</span></li>
+                            @endforeach
+                        </ul>
 
                     {{--</div>--}}
                 {{--</div>--}}
