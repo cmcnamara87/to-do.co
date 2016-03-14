@@ -19,7 +19,7 @@
             </div>
             <div class="col-sm-8">
                 @foreach($categories as $category)
-                    <h2><a href="{{ url("{$city->slug}/{$category->slug}") }}">{{ $category->name }}</a></h2>
+                    <h2 class="text-capitalize"><a href="{{ url("{$city->slug}/{$category->slug}") }}">{{ $category->name }}</a></h2>
 
                     @include('includes.activities', ["activities" => $category->activities->count() >= 4 ? $category->activities->take(4) : $category->activities])
                 @endforeach
