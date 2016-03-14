@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Activity;
 use App\Category;
+use App\City;
 use App\Feature;
 use App\Jobs\CreateActivity;
 use App\Timetable;
@@ -206,13 +207,17 @@ class LoadActivities extends Command
                 }
             }
 
+            $city = City::firstOrCreate([
+                "name" => 'Brisbane'
+            ]);
             $activity = Activity::firstOrCreate(['title' => $title]);
             $activity->fill([
                 "description" => $description,
                 "weblink" => (string)$item->link,
                 "image_url" => $image_url,
                 "price" => $price,
-                "value" => $value
+                "value" => $value,
+                "city_id" => $city->id
             ]);
             $activity->save();
             if($price == 0) {
@@ -264,12 +269,16 @@ class LoadActivities extends Command
 
             $price = $deal->priceSummary->price->amount / 100.0;
             $value = $deal->priceSummary->value->amount / 100.0;
+            $city = City::firstOrCreate([
+                "name" => 'Brisbane'
+            ]);
             $activity->fill([
                 "description" => $deal->highlightsHtml,
                 "weblink" => $deal->dealUrl,
                 "image_url" => $deal->largeImageUrl,
                 "price" => $price,
-                "value" => $value
+                "value" => $value,
+                "city_id" => $city->id
             ]);
             $activity->save();
             if ($price > 0 && $price <= 20) {
@@ -306,13 +315,17 @@ class LoadActivities extends Command
 
         $activityIds = array_map(function ($movie) use ($category) {
             $fakeSlug = preg_replace('/[^a-z\d]/i', '-', $movie->title);
-            $activity = Activity::firstOrCreate(['title' => "Watch " . $movie->title . " at the Cinemas"]);
+            $activity = Activity::firstOrCreate(['title' => $movie->title . " at the Cinemas"]);
+            $city = City::firstOrCreate([
+                "name" => 'Brisbane'
+            ]);
             $activity->fill([
                 "description" => $movie->synopsis,
                 "weblink" => "http://moviesowl.com/movies/$fakeSlug/Brisbane/today",
                 "image_url" => "http://moviesowl.com/{$movie->wide_poster}",
                 "price" => -1,
-                "value" => -1
+                "value" => -1,
+                "city_id" => $city->id
             ]);
             $activity->save();
 

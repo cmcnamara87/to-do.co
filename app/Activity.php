@@ -23,7 +23,8 @@ class Activity extends Model implements SluggableInterface
         'image_url',
         'weblink',
         'price',
-        'value'
+        'value',
+        'city_id'
     ];
 
     /**
@@ -41,6 +42,10 @@ class Activity extends Model implements SluggableInterface
     public function categories()
     {
         return $this->belongsToMany(Category::class);
+    }
+    public function city()
+    {
+        return $this->hasOne(City::class);
     }
 
     /**

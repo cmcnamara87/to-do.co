@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Activity;
 use App\Category;
+use App\City;
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -26,8 +27,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        $router->model('activities', Activity::class);
-        $router->model('categories', Category::class);
+        $router->model('activity', Activity::class);
+        $router->model('category', Category::class);
+        $router->model('city', City::class);
         parent::boot($router);
     }
 

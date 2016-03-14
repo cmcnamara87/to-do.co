@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Urls
+ * / -> list of cities
+ * /{city} -> just dump all activities
+ * /{city}/{category} -> dump all activities in that category
+ */
+
 /*
 |--------------------------------------------------------------------------
 | Routes File
@@ -72,7 +79,12 @@ Route::get('/brisbane-city-council-events', function() {
 //things do brisbane city	80	14	0		99	Search
 
 
-Route::get('/', 'CategoriesController@index');
+Route::get('/', 'CitiesController@index');
+Route::get('{city}', 'CitiesController@show');
+Route::get('activities/{activity}', 'ActivitiesController@show');
+Route::get('{city}/{category}', 'CitiesCategoriesController@show');
+
+
 Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
 Route::resource('activities', 'ActivitiesController');
 Route::resource('features', 'FeaturesController');

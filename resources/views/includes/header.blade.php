@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top" style="margin-bottom: 0;">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -38,3 +38,21 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+{{--<div style="background-color: #F89D85;">--}}
+    {{--<div class="container">--}}
+        {{--<ul class="nav nav-pills">--}}
+            {{--<li role="presentation" class="active"><a href="#">Today</a></li>--}}
+            {{--<li role="presentation"><a href="#">Profile</a></li>--}}
+            {{--<li role="presentation"><a href="#">Messages</a></li>--}}
+        {{--</ul>--}}
+        {{--<ul class="nav nav-pills">--}}
+            {{--<li>--}}
+                {{--<a href="">All</a>--}}
+            {{--</li>--}}
+            {{--@foreach(\App\Category::all() as $category)--}}
+                {{--<li role="presentation"><a href="#">{{ $category->name }}</a></li>--}}
+            {{--@endforeach--}}
+        {{--</ul>--}}
+    {{--</div>--}}
+
+{{--</div>--}}
