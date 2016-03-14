@@ -6,11 +6,12 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-4">
-                <ul>
+                <h4>Most Popular Tags</h4>
+                <ul class="list-unstyled">
                     @foreach($categories as $category)
                     <li>
                         <a class="text-capitalize" href="{{ url("{$city->slug}/{$category->slug}") }}">
-                            {{ $category->name }}
+                            {{ $category->name }} <span class="badge">{{ $category->activities->count() }}</span>
                         </a>
                     </li>
                     @endforeach

@@ -18,7 +18,17 @@ class CitiesController extends Controller
         return view('cities.index', compact('cities'));
     }
     public function show(City $city) {
-        $categories = Category::all();
+        $categories = Category::whereHas('activities', function($q) use ($city) {
+            $q->where('city_id', $city->id);
+        })
+            ->with(['activities' => function($q) use ($city) {
+            $q->where('city_id', $city->id);
+        }])
+            ->get()
+            ->sortByDesc(function($category) {
+            return $category->activities->count();
+        })->values()->all();
+
         $start = Carbon::now();
         $activities = Activity::whereHas('timetables', function ($query) use ($start) {
             $query->where('end_time', '>=', $start); // not over yet
