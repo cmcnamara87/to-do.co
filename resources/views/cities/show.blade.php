@@ -18,7 +18,11 @@
                 </ul>
             </div>
             <div class="col-sm-8">
-                @include('includes.activities', ["activities" => $activities])
+                @foreach($categories as $category)
+                    <h2>{{ $category->name }}</h2>
+
+                    @include('includes.activities', ["activities" => $category->activities->count() >= 4 ? $category->activities->take(4) : $category->activities])
+                @endforeach
             </div>
         </div>
 

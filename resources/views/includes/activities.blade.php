@@ -15,11 +15,22 @@
                         <h5>
                             <a href="{{ url("activities/{$activity->slug}") }}">{{ $activity->title }}</a>
                         </h5>
-                        <ul class="list-unstyled">
-                            @foreach($activity->timetables as $timetable)
-                                <li class="text-muted">{{ $timetable->start_time->toDateTimeString() }}
-                                    - {{ $timetable->end_time->toDateTimeString() }}</li>
+                        <ul class="list-unstyled text-muted">
+                            @foreach($activity->timetables->take(1) as $firstTimetable)
+                                @if($firstTimetable->start_time->day == $firstTimetable->end_time->day)
+                                    <em>{{ $firstTimetable->start_time->format('l j F Y') }}</em>
+                                    {{ $firstTimetable->start_time->format('h:i A') }} -
+                                    {{ $firstTimetable->end_time->format('h:i A') }}
+                                @else
+                                    <em>{{ $firstTimetable->start_time->format('l j F Y') }}</em>
+                                    {{ $firstTimetable->start_time->format('h:i A') }} -
+                                    <em>{{ $firstTimetable->end_time->format('l j F Y') }}</em>
+                                    {{ $firstTimetable->end_time->format('h:i A') }}
+                                @endif
                             @endforeach
+
+                                {{--                            Next On: {{ $firstTimetable->start_time->toDateTimeString() }}--}}
+{{--                            - {{ $firstTimetable->end_time->toDateTimeString() }}--}}
                         </ul>
                         <p class="text-muted">
                             @if($activity->price == 0)
