@@ -254,8 +254,13 @@ class LoadActivities extends Command
 
     private function goGroupon($grouponCategory)
     {
+        if($grouponCategory == 'things-to-do') {
+            $categoryName = 'Adventurous';
+        } else {
+            $categoryName = str_replace('-', ' ', $grouponCategory);
+        }
         $category = Category::firstOrCreate([
-            "name" => str_replace('-', ' ', $grouponCategory)
+            "name" => $categoryName
         ]);
 
         $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_" . env('GPN_AFFILIATE_ID') . "_212556_0&division_id=brisbane&offset=0&limit=20&filters=category:$grouponCategory";
