@@ -13,8 +13,8 @@
 <!-- load bootstrap from a cdn -->
 {{--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">--}}
 
-<!-- webmaster verification -->
-<meta name="google-site-verification" content="5qA-_e3WDYgZXrQAjROFaafiyXPLWsWTQ5Xu75rq154" />
+<!-- bing verification -->
+<meta name="msvalidate.01" content="CEA23E28388CAB393B3DA202CB27EEF3" />
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
