@@ -41,7 +41,7 @@
 
                         <ul class="list-unstyled">
                             @foreach($activity->categories as $category)
-                                <li>{{ $category->name }}</li>
+                                <li class="text-capitalize"><a href="{{ url("{$activity->city->slug}/{$category->slug}") }}">{{ $category->name }}</a></li>
                             @endforeach
                         </ul>
                     </div>

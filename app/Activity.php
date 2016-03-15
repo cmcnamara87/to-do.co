@@ -45,7 +45,7 @@ class Activity extends Model implements SluggableInterface
     }
     public function city()
     {
-        return $this->hasOne(City::class);
+        return $this->belongsTo(City::class);
     }
 
     /**
