@@ -29,19 +29,18 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <h4>Most Popular Tags</h4>
-                <ul class="list-unstyled">
+
+                <div class="list-group">
                     @foreach($categories as $category)
-                        <li>
-                            <a class="text-capitalize" href="{{ url("{$city->slug}/{$category->slug}") }}">
-                                {{ $category->name }}
-                            </a>
-                        </li>
+                    <a class="list-group-item" class="text-capitalize" href="{{ url("{$city->slug}/{$category->slug}") }}">
+                        {{ $category->name }}
+                    </a>
                     @endforeach
-                </ul>
+                </div>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 @foreach($categories as $category)
                     <h2 class="text-capitalize"><a
                                 href="{{ url("{$city->slug}/{$category->slug}") }}">{{ $category->name }}</a></h2>

@@ -16,14 +16,12 @@
             <p class="text-muted">Select your city from the list below</p>
         </div>
 
-        <ul>
+        <div class="list-group">
             @foreach($cities as $city)
-            <li>
-                <a href="{{ url("{$city->slug}") }}" title="{{ $city->name }}">
+                <a class="list-group-item" href="{{ url("{$city->slug}") }}" title="{{ $city->name }}">
                     {{ $city->name }}
                 </a>
-            </li>
             @endforeach
-        </ul>
+        </div>
     </div>
 @stop
