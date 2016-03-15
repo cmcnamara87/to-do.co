@@ -47,13 +47,7 @@ Route::get('sitemap', function(){
         // add every post to the sitemap
         foreach ($activities as $activity)
         {
-            // add item with images
-            $images = [[
-                'url' => asset($activity->image_url),
-                'title' => $activity->title,
-                'caption' => $activity->description
-            ]];
-            $sitemap->add(url("activities/{$activity->slug}"), $activity->updated_at, 0.5, 'yearly', $images);
+            $sitemap->add(url("activities/{$activity->slug}"), $activity->updated_at, 0.5, 'yearly');
         }
     }
     // show your sitemap (options: 'xml' (default), 'html', 'txt', 'ror-rss', 'ror-rdf')
