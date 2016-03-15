@@ -35,7 +35,7 @@
                     @foreach($categories as $category)
                         <li>
                             <a class="text-capitalize" href="{{ url("{$city->slug}/{$category->slug}") }}">
-                                {{ $category->name }} <span class="badge">{{ $category->activities->count() }}</span>
+                                {{ $category->name }}
                             </a>
                         </li>
                     @endforeach
