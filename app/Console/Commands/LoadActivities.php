@@ -142,6 +142,7 @@ class LoadActivities extends Command
             "name" => trim(str_replace("events", "", $categoryName))
         ]);
 
+
         // south bank feed
         $xml = simplexml_load_file($url);
         $activityIds = [];
@@ -250,6 +251,22 @@ class LoadActivities extends Command
             // save it
         }
         $category->activities()->sync($activityIds, false);
+
+        $goodCategories = [
+            "Festivals",
+            "LIVE",
+            "Music and concert",
+            "Brisbane Powerhouse",
+            "Riverstage",
+            "Brisbane Markets",
+            "movies"
+        ];
+        if (in_array($categoryName, $goodCategories)) {
+            $featuredCategory = Category::firstOrCreate([
+                'name' => 'Featured'
+            ]);
+            $featuredCategory->activities()->sync($activityIds, false);
+        }
     }
 
     private function goGroupon($grouponCategory)
