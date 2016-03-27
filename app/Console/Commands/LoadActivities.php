@@ -280,7 +280,9 @@ class LoadActivities extends Command
             "name" => $categoryName
         ]);
         $limit = 200;
-        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code=AU&tsToken=IE_AFF_0_" . env('GPN_AFFILIATE_ID') . "_212556_0&division_id=brisbane&offset=0&limit=$limit&filters=category:$grouponCategory";
+        $countryCode = 'AU';
+        $gpnMediaId = '212556'; // https://partner-api.groupon.com/help/deal-api
+        $brisbaneGrouponUrl = "https://partner-int-api.groupon.com/deals.json?country_code={$countryCode}&tsToken={$countryCode}_AFF_0_" . env('GPN_AFFILIATE_ID') . "_{$gpnMediaId}_0&division_id=brisbane&offset=0&limit=$limit&filters=category:$grouponCategory";
         $groupon = json_decode(@file_get_contents($brisbaneGrouponUrl));
         if (!isset($groupon->deals)) {
             Log::info('no deails found');
