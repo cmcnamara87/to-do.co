@@ -1,6 +1,6 @@
 @extends('layouts.default')
-@section('title', 'Things To Do in Brisbane')
-@section('description', 'Find Great Activities and Events from around Brisbane')
+@section('title', "Things To Do in {$city->name}")
+@section('description', "Find Great Activities and Events from around {$city->name}")
 @section('breadcrumb')
 {
     "@context": "http://schema.org",
@@ -17,17 +17,17 @@
 @stop
 @section('content')
 
-    {{--<div class="jumbotron">--}}
-        {{--<div class="container">--}}
-            {{--<h1>Things To Do in {{ $city->name }}</h1>--}}
-
-            {{--<p>Find Great Activities and Events in {{ $city->name }}</p>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-
 
 
     <div class="container-fluid">
+        <h1>Things to do in {{ $city->name }}</h1>
+        <p class="text-muted">Find great things to see and do in {{ $city->name }}.</p>
+
+        <h2>Things to do Today</h2>
+        <p class="text-muted">Here are some things to do today in {{ $city->name }}</p>
+
+        @include('includes.activities', ["activities" => $categories->get(0)->activities->take(4)])
+
         <div class="row">
             <div class="col-sm-3">
                 <div class="panel panel-default">

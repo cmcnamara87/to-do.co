@@ -79,7 +79,7 @@ Route::get('/brisbane-city-council-events', function() {
 
 //things do brisbane city	80	14	0		99	Search
 
-
+Route::get('/categories', 'CategoriesController@index');
 Route::get('/', 'CitiesController@index');
 Route::get('{city}', 'CitiesController@show');
 Route::get('activities/{activity}', 'ActivitiesController@show');
