@@ -81,8 +81,9 @@
 
 //Route::get('/categories', 'CategoriesController@index');
 Route::resource('features', 'FeaturesController');
+Route::get('/', 'FeaturesController@index');
 
-Route::get('/', 'CitiesController@index');
+//Route::get('/', 'CitiesController@index');
 Route::get('{city}', 'CitiesController@show');
 
 //Route::get('activities/{activity}', 'ActivitiesController@show');
