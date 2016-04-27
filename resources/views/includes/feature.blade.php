@@ -46,9 +46,9 @@
                 </div>
             </li>
             @endforeach
-            <li class="list-group-item">
-                <a href="{{ url("activities") }}">See all the events on {{ $feature->date->format('l j F') }}</a>
-            </li>
+            {{--<li class="list-group-item">--}}
+                {{--<a href="{{ url("activities") }}">See all the events on {{ $feature->date->format('l j F') }}</a>--}}
+            {{--</li>--}}
         </ul>
     </div>
 </div>

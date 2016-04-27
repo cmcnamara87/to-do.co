@@ -10,7 +10,6 @@
         </div>
     </div>
     <div class="container">
-        <h2>Featured</h2>
         @foreach($features as $feature)
             <h3>{{ $feature->date->format('l') }}</h3>
             @include('includes.feature', ["feature" => $feature])
