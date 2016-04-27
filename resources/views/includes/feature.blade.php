@@ -1,3 +1,4 @@
+
 <div class="row">
     <div class="col-sm-8 ">
         <ul class="list-group">
@@ -23,21 +24,21 @@
                                 No more sessions.
                             </li>
                             @endif
-                            @foreach($activity->timetables as $timetable)
-                            <li>
-                                Next on:
-                                @if($timetable->start_time->day == $timetable->end_time->day)
-                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->start_time->format('h:i A') }} -
-                                    {{ $timetable->end_time->format('h:i A') }}
-                                @else
-                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->start_time->format('h:i A') }} -
-                                    <strong>{{ $timetable->end_time->format('l j F Y') }}</strong>
-                                    {{ $timetable->end_time->format('h:i A') }}
-                                @endif
-                            </li>
-                            @endforeach
+                            {{--@foreach($activity->timetables->take(1) as $timetable)--}}
+                            {{--<li>--}}
+                                {{--Next on:--}}
+                                {{--@if($timetable->start_time->day == $timetable->end_time->day)--}}
+                                    {{--<strong>{{ $timetable->start_time->format('l j F Y') }}</strong>--}}
+                                    {{--{{ $timetable->start_time->format('h:i A') }} ---}}
+                                    {{--{{ $timetable->end_time->format('h:i A') }}--}}
+                                {{--@else--}}
+                                    {{--<strong>{{ $timetable->start_time->format('l j F Y') }}</strong>--}}
+                                    {{--{{ $timetable->start_time->format('h:i A') }} ---}}
+                                    {{--<strong>{{ $timetable->end_time->format('l j F Y') }}</strong>--}}
+                                    {{--{{ $timetable->end_time->format('h:i A') }}--}}
+                                {{--@endif--}}
+                            {{--</li>--}}
+                            {{--@endforeach--}}
                         </ul>
                     </div>
                 </div>
