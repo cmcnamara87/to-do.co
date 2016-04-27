@@ -17,81 +17,84 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('sitemap', function(){
-
-    // create new sitemap object
-    $sitemap = App::make("sitemap");
-
-    // set cache key (string), duration in minutes (Carbon|Datetime|int), turn on/off (boolean)
-    // by default cache is disabled
-    $sitemap->setCache('laravel.sitemap', 60);
-
-    // check if there is cached sitemap and build new only if is not
-    if (!$sitemap->isCached())
-    {
-        // add item to the sitemap (url, date, priority, freq)
-        $sitemap->add(URL::to('/'), \Carbon\Carbon::today(), '0.5', 'monthly');
-
-        $cities = \App\City::all();
-        $categories = \App\Category::all();
-        foreach($cities as $city) {
-            $sitemap->add(url("{$city->slug}"), \Carbon\Carbon::today(), 0.9, 'daily');
-            foreach($categories as $category) {
-                $sitemap->add(url("{$city->slug}/{$category->slug}"), \Carbon\Carbon::today(), 0.8, 'daily');
-            }
-        }
-
-        // get all posts from db
-        $activities = \App\Activity::orderBy('created_at', 'desc')->get();
-
-        // add every post to the sitemap
-        foreach ($activities as $activity)
-        {
-            $sitemap->add(url("activities/{$activity->slug}"), $activity->updated_at, 0.5, 'yearly');
-        }
-    }
-    // show your sitemap (options: 'xml' (default), 'html', 'txt', 'ror-rss', 'ror-rdf')
-    return $sitemap->render('xml');
-});
+//Route::get('sitemap', function(){
+//
+//    // create new sitemap object
+//    $sitemap = App::make("sitemap");
+//
+//    // set cache key (string), duration in minutes (Carbon|Datetime|int), turn on/off (boolean)
+//    // by default cache is disabled
+//    $sitemap->setCache('laravel.sitemap', 60);
+//
+//    // check if there is cached sitemap and build new only if is not
+//    if (!$sitemap->isCached())
+//    {
+//        // add item to the sitemap (url, date, priority, freq)
+//        $sitemap->add(URL::to('/'), \Carbon\Carbon::today(), '0.5', 'monthly');
+//
+//        $cities = \App\City::all();
+//        $categories = \App\Category::all();
+//        foreach($cities as $city) {
+//            $sitemap->add(url("{$city->slug}"), \Carbon\Carbon::today(), 0.9, 'daily');
+//            foreach($categories as $category) {
+//                $sitemap->add(url("{$city->slug}/{$category->slug}"), \Carbon\Carbon::today(), 0.8, 'daily');
+//            }
+//        }
+//
+//        // get all posts from db
+//        $activities = \App\Activity::orderBy('created_at', 'desc')->get();
+//
+//        // add every post to the sitemap
+//        foreach ($activities as $activity)
+//        {
+//            $sitemap->add(url("activities/{$activity->slug}"), $activity->updated_at, 0.5, 'yearly');
+//        }
+//    }
+//    // show your sitemap (options: 'xml' (default), 'html', 'txt', 'ror-rss', 'ror-rdf')
+//    return $sitemap->render('xml');
+//});
 
 //brisbane city council events	72	13	31		99	Search
-Route::get('/brisbane-city-council-events', function() {
-    $title = 'Brisbane City Council Events';
-    $description = 'Find all the Brisbane City Council Events on in Brisbane';
-    $when = 'today';
-    $sort = 'soon';
-    $start = \Carbon\Carbon::now();
-    $end = \Carbon\Carbon::now()->endOfDay();
-
-    $category = \App\Category::where('name', 'Brisbane City Council')->first();
-
-    $activities = \App\Activity::whereHas('timetables', function ($query) use ($start, $end) {
-        $query->where('end_time', '>=', $start); // not over yet
-        $query->where('start_time', '<=', $end); // but it starts before today is ova
-    })->whereHas('categories', function($query) use ($category) {
-        $query->where('id', $category->id);
-    })->with(['categories', 'timetables' => function ($q) use ($start) {
-        $q->where('end_time', '>=', $start);
-    }])->get();
-
-    return view('pages.show', compact('activities', 'title', 'when', 'description'));
-});
+//Route::get('/brisbane-city-council-events', function() {
+//    $title = 'Brisbane City Council Events';
+//    $description = 'Find all the Brisbane City Council Events on in Brisbane';
+//    $when = 'today';
+//    $sort = 'soon';
+//    $start = \Carbon\Carbon::now();
+//    $end = \Carbon\Carbon::now()->endOfDay();
+//
+//    $category = \App\Category::where('name', 'Brisbane City Council')->first();
+//
+//    $activities = \App\Activity::whereHas('timetables', function ($query) use ($start, $end) {
+//        $query->where('end_time', '>=', $start); // not over yet
+//        $query->where('start_time', '<=', $end); // but it starts before today is ova
+//    })->whereHas('categories', function($query) use ($category) {
+//        $query->where('id', $category->id);
+//    })->with(['categories', 'timetables' => function ($q) use ($start) {
+//        $q->where('end_time', '>=', $start);
+//    }])->get();
+//
+//    return view('pages.show', compact('activities', 'title', 'when', 'description'));
+//});
 
 //things do brisbane city	80	14	0		99	Search
 
-Route::get('/categories', 'CategoriesController@index');
-Route::get('/', 'CitiesController@index');
-Route::get('{city}', 'CitiesController@show');
-Route::get('activities/{activity}', 'ActivitiesController@show');
-Route::get('{city}/{category}', 'CitiesCategoriesController@show');
-
-
-Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
-Route::resource('activities', 'ActivitiesController');
+//Route::get('/categories', 'CategoriesController@index');
 Route::resource('features', 'FeaturesController');
 
-Route::get('/brisbane/{when}/{sort}', 'ActivitiesController@brisbane');
-Route::get('/brisbane/{categories}/{when}/{sort}', 'CategoriesController@show');
+Route::get('/', 'CitiesController@index');
+Route::get('{city}', 'CitiesController@show');
+
+//Route::get('activities/{activity}', 'ActivitiesController@show');
+//Route::get('{city}/{category}', 'CitiesCategoriesController@show');
+
+
+//Route::get('/things-to-do-in-brisbane', 'FeaturesController@index');
+//Route::resource('activities', 'ActivitiesController');
+//Route::resource('features', 'FeaturesController');
+//
+//Route::get('/brisbane/{when}/{sort}', 'ActivitiesController@brisbane');
+//Route::get('/brisbane/{categories}/{when}/{sort}', 'CategoriesController@show');
 //Route::get('/brisbane/this-weekend/soon', 'ActivitiesController@brisbaneThisWeekendSoon');
 //Route::get('/brisbane/this-weekend/cool', 'ActivitiesController@brisbaneThisWeekendCool');
 //
@@ -101,10 +104,10 @@ Route::get('/brisbane/{categories}/{when}/{sort}', 'CategoriesController@show');
 //Route::get('/brisbane/tomorrow/cool', 'ActivitiesController@brisbaneTomorrowCool');
 //Route::get('/brisbane/tomorrow/soon', 'ActivitiesController@brisbaneTomorrowSoon');
 
-Route::get('/categories/{categories}', 'CategoriesController@show');
-Route::get('/categories', 'CategoriesController@index');
-
-Route::get('/{activities}/{when?}', 'ActivitiesController@show');
+//Route::get('/categories/{categories}', 'CategoriesController@show');
+//Route::get('/categories', 'CategoriesController@index');
+//
+//Route::get('/{activities}/{when?}', 'ActivitiesController@show');
 
 // Jaaxy Routes
 // fun things to do in brisbane	75	13	108		92	Search

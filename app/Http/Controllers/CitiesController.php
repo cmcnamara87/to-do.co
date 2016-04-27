@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Activity;
 use App\Category;
 use App\City;
+use App\Feature;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -22,6 +23,10 @@ class CitiesController extends Controller
 
     public function show(City $city)
     {
+
+        $features = Feature::all();
+        dd($features);
+
         $start = Carbon::now();
 
 
