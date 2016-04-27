@@ -5,7 +5,7 @@
 
     <div class="jumbotron">
         <div class="container">
-            <h1>Things To Do in Brisbane</h1>
+            <h1>10 Cools Things To Do in Brisbane Every Day</h1>
             <p>Find Great Activities and Events from around Brisbane</p>
         </div>
     </div>
