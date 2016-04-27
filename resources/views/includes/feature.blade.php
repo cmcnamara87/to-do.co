@@ -9,15 +9,17 @@
                         <img src="{{ asset($activity->image_url) }}" alt="{{ $activity->title }}" style="width:100px;"/>
                     </div>
                     <div class="media-body">
-                        <h4><a href="{{ url("{$activity->slug}") }}">{{ $activity->title }}</a></h4>
-                        <p>
-                            {!! str_limit(strip_tags($activity->description), 150, '...') !!}
-                        </p>
-                        <ul>
+                        <ul class="pull-right">
                             @foreach($activity->categories as $category)
                                 <li>{{ $category->name }}</li>
                             @endforeach
                         </ul>
+
+                        <h4><a href="{{ url("activities/{$activity->slug}") }}">{{ $activity->title }}</a></h4>
+                        <p>
+                            {!! str_limit(strip_tags($activity->description), 150, '...') !!}
+                        </p>
+
                         <ul>
                             @if(!$activity->timetables->count())
                             <li>
