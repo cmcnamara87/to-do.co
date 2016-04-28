@@ -1,6 +1,7 @@
 
 <div class="row">
     <div class="col-sm-8 ">
+
         <ul class="list-group">
             @foreach($feature->activities as $activity)
             <li class="list-group-item" @if(\Carbon\Carbon::now()->gte($activity->timetables->last()->end_time)) style="opacity:0.5;text-decoration:line-through;" @endif>
@@ -46,9 +47,12 @@
                 </div>
             </li>
             @endforeach
-            {{--<li class="list-group-item">--}}
+            @if($feature->activities->count() < 10)
+            <li class="list-group-item">
+                + {{ 10 - $feature->activities->count() }} activities expired.
                 {{--<a href="{{ url("activities") }}">See all the events on {{ $feature->date->format('l j F') }}</a>--}}
-            {{--</li>--}}
+            </li>
+            @endif
         </ul>
     </div>
 </div>

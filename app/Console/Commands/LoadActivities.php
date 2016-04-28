@@ -64,7 +64,7 @@ class LoadActivities extends Command
         // generate featured!
         // get all featured activtiies ids
 
-        $day = Carbon::now();
+        $day = Carbon::today();
 
         $previousFeaturedActivityIds = DB::table('activity_feature')->lists('activity_id');
         $activities = Activity::whereHas('timetables', function($query) use ($day, $previousFeaturedActivityIds) {
@@ -95,7 +95,6 @@ class LoadActivities extends Command
         }
         $feature->activities()->delete();
         $feature->activities()->saveMany($activities);
-
 
     }
 }

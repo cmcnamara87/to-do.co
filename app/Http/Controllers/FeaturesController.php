@@ -18,6 +18,9 @@ class FeaturesController extends Controller
             $feature->load(['activities.timetables' => function ($q) use ($feature) {
                 $q->where('end_time', '>=', $feature->date);
             }]);
+            $feature->activities = $feature->activities->filter(function ($activity) {
+                return Carbon::now()->lt($activity->timetables->last()->end_time);
+            });
         }
         return view('features.index', compact('features'));
     }
