@@ -28,18 +28,18 @@ class BccLoader implements ActivityLoader {
             "Brisbane Markets" => "http://www.trumba.com/calendars/type.rss?filterview=Markets&filter1=_178869_&filterfield1=21859",
             "Library events" => "http://www.trumba.com/calendars/libraries.rss",
             "Movies" => "http://www.trumba.com/calendars/type.rss?filterview=movies&filter1=_178865_&filterfield1=21859",
-            "Visible ink events" => "http://www.trumba.com/calendars/visble-ink.rss",
-            "Teen events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=teens",
+//            "Visible ink events" => "http://www.trumba.com/calendars/visble-ink.rss",
+//            "Teen events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=teens",
             "Southbank Parklands events" => "http://www.trumba.com/calendars/south-bank.rss?filterview=southbank&filter4=_464155_&filterfield4=22542",
             "Sir Thomas Brisbane Planetarium events" => "http://www.trumba.com/calendars/planetarium.rss",
             "Riverstage events" => "http://www.trumba.com/calendars/brisbane-riverstage.rss",
             "Museum of Brisbane events" => "http://www.trumba.com/calendars/mob.rss",
             // "King George Square events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
-            "Kids aged 6 to 12 events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=kids_6_12",
-            "Infants and toddlers events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=infants_toddlers",
+//            "Kids aged 6 to 12 events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=kids_6_12",
+//            "Infants and toddlers events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=infants_toddlers",
             "Green events" => "http://www.trumba.com/calendars/green-events.rss?filterview=green_events",
-            "GOLD program events" => "http://www.trumba.com/calendars/gold.rss?filterview=gold",
-            "GOLD n' Kids events" => "http://www.trumba.com/calendars/gold-n-kids.rss",
+//            "GOLD program events" => "http://www.trumba.com/calendars/gold.rss?filterview=gold",
+//            "GOLD n' Kids events" => "http://www.trumba.com/calendars/gold-n-kids.rss",
             "Festivals" => "http://www.trumba.com/calendars/type.rss?filterview=festivals&filter1=_178868_&filterfield1=21859",
             "Family events" => "http://www.trumba.com/calendars/audience-brisbane.rss?filterview=family&filter1=_178891_&filterfield1=21859",
             "Chill Out events" => "http://www.trumba.com/calendars/chill-out.rss",
@@ -115,6 +115,11 @@ class BccLoader implements ActivityLoader {
                 $description = (string)$xcal->description;
             } else {
                 $description = '';
+            }
+
+            if(strpos ($title, "senior") !== false ||
+                strpos ($description, "senior" ) !== false) {
+                continue;
             }
 
             Log::info($trumba->weblink);
