@@ -79,6 +79,7 @@ class BccLoader implements ActivityLoader {
                 $xcal = $item->children($namespaces['xCal']);
             }
 
+            // prices
             $image_url = '';
             $price = -1;
             $value = -1;
@@ -86,8 +87,6 @@ class BccLoader implements ActivityLoader {
                 if ($customField->attributes()->name == "Event image") {
                     $image_url = (string)$customField;
                 }
-                // time to work out the price
-//            <x-trumba:customfield name="Cost" id="22177" type="text">Free</x-trumba:customfield>
                 if ($customField->attributes()->name == "Cost") {
                     $priceString = (string)$customField;
                     Log::info($priceString);
@@ -96,20 +95,9 @@ class BccLoader implements ActivityLoader {
                         $value = 0;
                     }
                 }
-//
-//                    } else {
-//                        $matches = [];
-//
-//                        if(count($matches)) {
-//                            dd($matches);
-//                        }
-//                    }
-//
-//                }
             }
 
-
-
+            // title and description
             $title = (string)$item->title;
             if(isset($xcal)) {
                 $description = (string)$xcal->description;
@@ -117,9 +105,19 @@ class BccLoader implements ActivityLoader {
                 $description = '';
             }
 
-            if(strpos ($title, "senior") !== false ||
-                strpos ($description, "senior" ) !== false) {
-                continue;
+            // dont process anything with these words
+            $stopWords = [
+                "senior",
+                "bubs",
+                "babies",
+                "50 plus",
+                "children"
+            ];
+            foreach($stopWords as $stopWord) {
+                if(strpos ($title, $stopWord) !== false ||
+                    strpos ($description, $stopWord) !== false) {
+                    continue 2;
+                }
             }
 
             Log::info($trumba->weblink);
