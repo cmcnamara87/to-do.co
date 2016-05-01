@@ -16,6 +16,7 @@ use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maknz\Slack\Facades\Slack;
 
 class LoadActivities extends Command
 {
