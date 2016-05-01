@@ -17,6 +17,32 @@
                         </ul>
 
                         <h4><a href="{{ url("activities/{$activity->slug}") }}">{{ $activity->title }}</a></h4>
+                        @if($activity->price > 0)
+                        <p class="text-muted">
+                            ${{ $activity->price }}
+                        </p>
+                        @endif
+                        @if($activity->price == 0)
+                        <p class="text-muted">
+                            Free
+                        </p>
+                        @endif
+
+                        @foreach($activity->timetables->take(1) as $timetable)
+                            <p class="text-muted">
+                                @if($timetable->start_time->day == $timetable->end_time->day)
+                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
+                                    {{ $timetable->start_time->format('h:i A') }} -
+                                    {{ $timetable->end_time->format('h:i A') }}
+                                @else
+                                    <strong>{{ $timetable->start_time->format('l j F Y') }}</strong>
+                                    {{ $timetable->start_time->format('h:i A') }} -
+                                    <strong>{{ $timetable->end_time->format('l j F Y') }}</strong>
+                                    {{ $timetable->end_time->format('h:i A') }}
+                                @endif
+                            </p>
+                        @endforeach
+
                         <p>
                             {!! str_limit(strip_tags($activity->description), 150, '...') !!}
                         </p>
@@ -27,21 +53,7 @@
                                 No more sessions.
                             </li>
                             @endif
-                            {{--@foreach($activity->timetables->take(1) as $timetable)--}}
-                            {{--<li>--}}
-                                {{--Next on:--}}
-                                {{--@if($timetable->start_time->day == $timetable->end_time->day)--}}
-                                    {{--<strong>{{ $timetable->start_time->format('l j F Y') }}</strong>--}}
-                                    {{--{{ $timetable->start_time->format('h:i A') }} ---}}
-                                    {{--{{ $timetable->end_time->format('h:i A') }}--}}
-                                {{--@else--}}
-                                    {{--<strong>{{ $timetable->start_time->format('l j F Y') }}</strong>--}}
-                                    {{--{{ $timetable->start_time->format('h:i A') }} ---}}
-                                    {{--<strong>{{ $timetable->end_time->format('l j F Y') }}</strong>--}}
-                                    {{--{{ $timetable->end_time->format('h:i A') }}--}}
-                                {{--@endif--}}
-                            {{--</li>--}}
-                            {{--@endforeach--}}
+
                         </ul>
                     </div>
                 </div>

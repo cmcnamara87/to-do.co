@@ -15,10 +15,14 @@ class FeaturesController extends Controller
     {
         $features = Feature::orderBy('date', 'desc')->get();
         foreach($features as $feature) {
+
             $feature->load(['activities.timetables' => function ($q) use ($feature) {
-                $q->where('end_time', '>=', $feature->date);
+                $q->where('end_time', '>=', Carbon::now());
             }]);
             $feature->activities = $feature->activities->filter(function ($activity) {
+                if(!$activity->timetables->count()) {
+                    return false;
+                }
                 return Carbon::now()->lt($activity->timetables->last()->end_time);
             });
         }
