@@ -25,6 +25,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('todo:load')->dailyAt('00:01');
+        $schedule->command('todo:load')->dailyAt('00:10');
     }
 }
