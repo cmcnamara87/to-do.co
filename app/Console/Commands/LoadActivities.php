@@ -70,7 +70,7 @@ class LoadActivities extends Command
 
         $previousFeaturedActivityIds = DB::table('activity_feature')->lists('activity_id');
         $activities = Activity::whereHas('timetables', function($query) use ($day, $previousFeaturedActivityIds) {
-            $end = $day->copy()->endOfDay();
+            $end = $day->copy()->addDays(3)->endOfDay();
             $query->where('start_time', '<=', $end);
             $query->where('end_time', '>=', $day);
             $query->whereNotIn('activity_id', $previousFeaturedActivityIds);
