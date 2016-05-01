@@ -10,11 +10,11 @@
                                 class="img-circle"/>
                     </div>
                     <div class="media-body">
-                        <ul class="pull-right">
-                            @foreach($activity->categories as $category)
-                                <li>{{ $category->name }}</li>
-                            @endforeach
-                        </ul>
+                        {{--<ul class="pull-right">--}}
+                            {{--@foreach($activity->categories as $category)--}}
+                                {{--<li>{{ $category->name }}</li>--}}
+                            {{--@endforeach--}}
+                        {{--</ul>--}}
 
                         <h4 style="margin:0;"><a style="color:#333;font-size:16px" href="{{ url("activities/{$activity->slug}") }}">{{ $activity->title }}</a></h4>
 
