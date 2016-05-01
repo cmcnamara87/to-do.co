@@ -76,13 +76,9 @@ class LoadActivities extends Command
             $query->whereNotIn('activity_id', $previousFeaturedActivityIds);
         })->get();
 
-        // sort them by some magical formula (its the number of days)
+        // sort them by starting today
         $activities = $activities->sortBy(function ($activity, $key) {
-            $score = array_reduce($activity->timetables->all(), function ($carry, $timetable) {
-                $diffInDays = $timetable->start_time->diff($timetable->end_time)->days;
-                $carry += max($diffInDays, 1);
-                return $carry;
-            }, 0);
+            return $activity->timetables->get(0)->start_time->diff(Carbon::now())->days;
             return $score;
         });
 
