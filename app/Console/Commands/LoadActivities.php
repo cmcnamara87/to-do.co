@@ -52,6 +52,7 @@ class LoadActivities extends Command
      */
     public function handle()
     {
+        Slack::send('Loading activities');
         $grouponLoader = new GrouponLoader();
         $grouponLoader->load();
 
@@ -95,6 +96,14 @@ class LoadActivities extends Command
         }
         $feature->activities()->delete();
         $feature->activities()->saveMany($activities);
+
+
+
+        Slack::send('Publishing things to do');
+        $activities->each(function($activity, $key) {
+            Slack::send("$key. {$activity->title}");
+        });
+
 
     }
 }
