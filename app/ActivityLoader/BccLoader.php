@@ -19,7 +19,7 @@ class BccLoader implements ActivityLoader {
     public function load() {
         $eventUrls = [
             "Classes and workshops" => "http://www.trumba.com/calendars/type.rss?filterview=classses",
-            "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
+//            "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
             "Business events" => "http://www.trumba.com/calendars/BiB.rss",
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
             "Brisbane Botanic Gardens events" => "http://www.trumba.com/calendars/brisbane-botanic-gardens.rss",
@@ -111,11 +111,14 @@ class BccLoader implements ActivityLoader {
                 "bubs",
                 "babies",
                 "50 plus",
-                "children"
+                "children",
+                "gold",
+                "kids",
+                "basics"
             ];
             foreach($stopWords as $stopWord) {
-                if(strpos ($title, $stopWord) !== false ||
-                    strpos ($description, $stopWord) !== false) {
+                if(strpos (strtolower($title), strtolower($stopWord)) !== false ||
+                    strpos (strtolower($description), strtolower($stopWord)) !== false) {
                     continue 2;
                 }
             }
