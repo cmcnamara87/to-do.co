@@ -159,6 +159,8 @@ return [
         Cviebrock\EloquentSluggable\SluggableServiceProvider::class,
         'Roumen\Sitemap\SitemapServiceProvider',
         'Maknz\Slack\SlackServiceProvider',
+        'Barryvdh\Cors\ServiceProvider',
+        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider'
 
     ],
 
@@ -206,6 +208,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Slack' => 'Maknz\Slack\Facades\Slack',
+        'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
     ],
 
 ];

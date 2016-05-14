@@ -83,6 +83,70 @@
 Route::resource('features', 'FeaturesController');
 Route::get('/', 'FeaturesController@index');
 
+Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
+    Route::get('users/{userId}/activities', function($userId) {
+        // get activities already decided on
+        $alreadyDecidedActivityIds = \App\Decision::where('user_id', $userId)
+            ->lists('activity_id');
+
+        $day = \Carbon\Carbon::today();
+        $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
+            $query->where('end_time', '>=', $day);
+        })->whereNotIn('id', $alreadyDecidedActivityIds)
+            ->paginate(15);
+        return response()->json($activities);
+    });
+    Route::get('activities/{id}', function ($id) {
+        $day = \Carbon\Carbon::today();
+        $activity = \App\Activity::where('id', $id)
+            ->whereHas('timetables', function($query) use ($day) {
+            $query->where('end_time', '>=', $day);
+        })->first();
+        return response()->json($activity);
+    });
+    Route::get('users/{userId}/calendar', function ($userId) {
+        $likedActivityIds = \App\Decision::where('user_id', $userId)
+            ->where('decision', 1)
+            ->lists('activity_id')->unique();
+
+        // all liked activities that havent ended
+        $day = \Carbon\Carbon::today();
+        $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
+            $query->where('end_time', '>=', $day);
+        })->whereIn('id', $likedActivityIds)->with(['timetables' => function ($q) {
+            // havent ended yet
+            $q->where('end_time', '>=', \Carbon\Carbon::now());
+        }])->get();
+
+        $calendar = $activities->reduce(function ($carry, $activity) {
+            foreach($activity->timetables as $timetable) {
+                $carry[$timetable->start_time->startOfDay()->timestamp][] = $activity;
+            }
+            return $carry;
+        }, []);
+        return $calendar;
+    });
+    Route::post('users', function () {
+        $user = \App\User::create([]);
+        return $user;
+    });
+    Route::post('users/{userId}/email', function ($userId) {
+        $data = \Illuminate\Support\Facades\Input::only('email');
+        $user = \App\User::find($userId);
+        $user->fill($data);
+        $user->save();
+        return $user;
+    });
+    Route::post('users/{userId}/decisions', function ($userId) {
+        $data = \Illuminate\Support\Facades\Input::all();
+        // store the decision
+        $data['user_id'] = $userId;
+        $decision = \App\Decision::create($data);
+        return $decision;
+    });
+});
+
+
 //Route::get('/', 'CitiesController@index');
 Route::get('{city}', 'CitiesController@show');
 Route::get('activities/{activity}', 'ActivitiesController@show');

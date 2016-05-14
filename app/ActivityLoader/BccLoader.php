@@ -114,7 +114,10 @@ class BccLoader implements ActivityLoader {
                 "children",
                 "gold",
                 "kids",
-                "basics"
+                "basics",
+                "toddler",
+                "school",
+                "homework",
             ];
             foreach($stopWords as $stopWord) {
                 if(strpos (strtolower($title), strtolower($stopWord)) !== false ||
