@@ -92,8 +92,10 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
         $day = \Carbon\Carbon::today();
         $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
-        })->whereNotIn('id', $alreadyDecidedActivityIds)
-            ->paginate(5);
+        })->whereNotIn('id', $alreadyDecidedActivityIds)->with(['timetables' => function ($q) {
+            // havent ended yet
+            $q->where('end_time', '>=', \Carbon\Carbon::now());
+        }])->paginate(5);
         return response()->json($activities);
     });
     Route::get('activities/{id}', function ($id) {
@@ -101,8 +103,18 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
         $activity = \App\Activity::where('id', $id)
             ->whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
-        })->first();
+
+        })->with(['timetables' => function ($q) {
+            // havent ended yet
+            $q->where('end_time', '>=', \Carbon\Carbon::now());
+        }])->first();
         return response()->json($activity);
+    });
+    Route::put('users/{userId}/activities/{activityId}/done', function($userId, $activityId) {
+        $decision = \App\Decision::where('user_id', $userId)->where('activity_id', $activityId)->first();
+        $decision->decision = 3;
+        $decision->save();
+        return response()->json($decision);
     });
     Route::get('users/{userId}/calendar', function ($userId) {
         $likedActivityIds = \App\Decision::where('user_id', $userId)
