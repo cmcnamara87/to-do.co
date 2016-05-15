@@ -97,7 +97,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
 
         $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
-        })->whereNotNull('image_url')->whereNotIn('id', $alreadyDecidedActivityIds)->with(['timetables' => function ($q) {
+        })->whereNotNull('image_url')->where('image_url', '!=', '')->whereNotIn('id', $alreadyDecidedActivityIds)->with(['timetables' => function ($q) {
             // havent ended yet
             $q->where('end_time', '>=', \Carbon\Carbon::now());
         }])->orderByRaw('FIELD(id,' . implode(',', $activityIds->toArray()) . ')')->paginate(5);
