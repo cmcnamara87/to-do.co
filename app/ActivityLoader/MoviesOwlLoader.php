@@ -25,7 +25,7 @@ class MoviesOwlLoader implements ActivityLoader {
     {
         // movies
         // just get the movies from indro
-        $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/730/movies"));
+        $json = json_decode(@file_get_contents("http://moviesowl.com/api/v1/cinemas/39/movies"));
         $category = Category::firstOrCreate([
             "name" => "movies"
         ]);
