@@ -90,12 +90,17 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
             ->lists('activity_id');
 
         $day = \Carbon\Carbon::today();
+
+        // get hte timetables on today
+        // ordered by, the ones ending the sooner
+        $activityIds = \App\Timetable::where('end_time', '>=', \Carbon\Carbon::now())->orderBy('end_time', 'asc')->lists('activity_id');
+
         $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
         })->whereNotIn('id', $alreadyDecidedActivityIds)->with(['timetables' => function ($q) {
             // havent ended yet
             $q->where('end_time', '>=', \Carbon\Carbon::now());
-        }])->paginate(5);
+        }])->orderByRaw('FIELD(id,' . implode(',', $activityIds->toArray()) . ')')->paginate(5);
         return response()->json($activities);
     });
     Route::get('activities/{id}', function ($id) {
@@ -132,7 +137,11 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
 
         $calendar = $activities->reduce(function ($carry, $activity) {
             foreach($activity->timetables as $timetable) {
-                $carry[$timetable->start_time->startOfDay()->timestamp][] = $activity;
+                $startTime = $timetable->start_time;
+                if($startTime->lte(\Carbon\Carbon::today())) {
+                    $startTime = \Carbon\Carbon::today();
+                }
+                $carry[$startTime->startOfDay()->timestamp][] = $activity;
             }
             return $carry;
         }, []);
