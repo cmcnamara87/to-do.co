@@ -93,7 +93,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
         $activities = \App\Activity::whereHas('timetables', function($query) use ($day) {
             $query->where('end_time', '>=', $day);
         })->whereNotIn('id', $alreadyDecidedActivityIds)
-            ->paginate(15);
+            ->paginate(5);
         return response()->json($activities);
     });
     Route::get('activities/{id}', function ($id) {
