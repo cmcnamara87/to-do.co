@@ -136,11 +136,15 @@ Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
         }])->get();
 
         $calendar = $activities->reduce(function ($carry, $activity) {
-            foreach($activity->timetables as $timetable) {
+            $startTimes = $activity->timetables->map(function ($timetable) {
                 $startTime = $timetable->start_time;
                 if($startTime->lte(\Carbon\Carbon::today())) {
-                    $startTime = \Carbon\Carbon::today();
+                    return \Carbon\Carbon::today();
                 }
+                return $startTime;
+            })->unique('timestamp');
+
+            foreach($startTimes as $startTime) {
                 $carry[$startTime->startOfDay()->timestamp][] = $activity;
             }
             return $carry;
