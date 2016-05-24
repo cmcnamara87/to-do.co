@@ -11,7 +11,8 @@
         "roumen/sitemap": "2.6.*",
         "maknz/slack": "^1.7",
         "barryvdh/laravel-cors": "^0.8.0",
-        "tymon/jwt-auth": "0.5.*"
+        "tymon/jwt-auth": "0.5.*",
+        "jgrossi/corcel": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

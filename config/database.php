@@ -86,6 +86,19 @@ return [
             'prefix'   => '',
         ],
 
+        'wordpress' => [ // this is your Corcel database connection, where WordPress tables are
+            'driver'    => 'mysql',
+            'host'      => 'localhost',
+            'database'  => 'todo-wp-db',
+            'username'  => 'todo-wp-user',
+            'password'  => '3aJYZd9ALh55L4ju',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => 'wp_',
+            'strict'    => false,
+            'engine'    => null,
+        ],
+
     ],
 
     /*

@@ -83,6 +83,14 @@
 Route::resource('features', 'FeaturesController');
 Route::get('/', 'FeaturesController@index');
 
+Route::get('/wordpress', function() {
+    $post = \App\Post::create([
+        'post_content' => "this is my content",
+        'post_title' => "new post title",
+        'post_excerpt' => "my excertp...its hard to type"
+    ]);
+    dd($post);
+});
 Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){
     Route::get('users/{userId}/activities', function($userId) {
         // get activities already decided on
