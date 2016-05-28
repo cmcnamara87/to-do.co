@@ -89,6 +89,8 @@ Route::get('/wordpress', function() {
         'post_title' => "new post title",
         'post_excerpt' => "my excertp...its hard to type"
     ]);
+//    $post->post_status = "draft";
+    $post->save();
     dd($post);
 });
 Route::group(['middleware' => 'cors', 'prefix' => 'api'], function(){

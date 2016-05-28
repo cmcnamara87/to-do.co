@@ -152,6 +152,13 @@ class BccLoader implements ActivityLoader {
                 "city_id" => $city->id
             ]);
             $activity->save();
+
+            $wordpressPost = \App\Post::create([
+                'post_content' => $description,
+                'post_title' => $title,
+                'post_excerpt' => $description
+            ]);
+
             if($price == 0) {
                 $freeCategory = Category::firstOrCreate([
                     "name" => "Free"
