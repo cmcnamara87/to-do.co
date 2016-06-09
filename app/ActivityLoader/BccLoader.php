@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 class BccLoader implements ActivityLoader {
     public function load() {
         $eventUrls = [
-//            "Classes and workshops" => "http://www.trumba.com/calendars/type.rss?filterview=classses",
+            "Classes and workshops" => "http://www.trumba.com/calendars/type.rss?filterview=classses",
 //            "Fitness and strength events" => "http://www.trumba.com/calendars/type.rss?filterview=Fitness&mixin=6887832c6817012c7829352c812762",
 //            "Business events" => "http://www.trumba.com/calendars/BiB.rss",
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
@@ -153,11 +153,13 @@ class BccLoader implements ActivityLoader {
             ]);
             $activity->save();
 
-            $wordpressPost = \App\Post::create([
-                'post_content' => $description,
-                'post_title' => $title,
-                'post_excerpt' => $description
-            ]);
+            $post = new Post;
+            $post->post_content = $description;
+            $post->post_title = $title;
+            $post->post_excerpt = str_limit(strip_tags($description));
+            $post->save();
+            Log::info('Saving post to wordpress');
+
 
             if($price == 0) {
                 $freeCategory = Category::firstOrCreate([
