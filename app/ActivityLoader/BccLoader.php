@@ -11,6 +11,7 @@ namespace App\ActivityLoader;
 use App\Activity;
 use App\Category;
 use App\City;
+use App\Post;
 use App\Timetable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -153,7 +154,7 @@ class BccLoader implements ActivityLoader {
             ]);
             $activity->save();
 
-            $post = new Post;
+            $post = new Post();
             $post->post_content = $description;
             $post->post_title = $title;
             $post->post_excerpt = str_limit(strip_tags($description));
