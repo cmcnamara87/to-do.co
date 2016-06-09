@@ -25,12 +25,12 @@ class BccLoader implements ActivityLoader {
             "Music and concert events" => "http://www.trumba.com/calendars/type.rss?filterview=Music&filter1=_178867_&filterfield1=21859",
 //            "Brisbane Botanic Gardens events" => "http://www.trumba.com/calendars/brisbane-botanic-gardens.rss",
             //"Brisbane Festival 2015 events" => "http://www.trumba.com/calendars/brisbane-festival.rss",
-//            "Arts, crafts and culture events" => "http://www.trumba.com/calendars/type.rss?filterview=arts&filter1=_171831_178893_&filterfield1=21859",
+            "Arts, crafts and culture events" => "http://www.trumba.com/calendars/type.rss?filterview=arts&filter1=_171831_178893_&filterfield1=21859",
             "Brisbane Markets" => "http://www.trumba.com/calendars/type.rss?filterview=Markets&filter1=_178869_&filterfield1=21859",
-//            "Library events" => "http://www.trumba.com/calendars/libraries.rss",
+            "Library events" => "http://www.trumba.com/calendars/libraries.rss",
             "Movies" => "http://www.trumba.com/calendars/type.rss?filterview=movies&filter1=_178865_&filterfield1=21859",
-//            "Visible ink events" => "http://www.trumba.com/calendars/visble-ink.rss",
-//            "Teen events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=teens",
+            "Visible ink events" => "http://www.trumba.com/calendars/visble-ink.rss",
+            "Teen events" => "http://www.trumba.com/calendars/brisbane-kids.rss?filterview=teens",
             "Southbank Parklands events" => "http://www.trumba.com/calendars/south-bank.rss?filterview=southbank&filter4=_464155_&filterfield4=22542",
             "Sir Thomas Brisbane Planetarium events" => "http://www.trumba.com/calendars/planetarium.rss",
             "Riverstage events" => "http://www.trumba.com/calendars/brisbane-riverstage.rss",
@@ -158,6 +158,7 @@ class BccLoader implements ActivityLoader {
             $post->post_content = $description;
             $post->post_title = $title;
             $post->post_excerpt = str_limit(strip_tags($description));
+            $post->post_type = 'post';
             $post->save();
             Log::info('Saving post to wordpress');
 
